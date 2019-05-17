@@ -1096,7 +1096,7 @@ public class SplatEngine {
                     count++;
 
                     if (count == z) {
-                        System.out.printf("%c", symbol[x]);
+                        System.out.print(symbol[x]);
                         count = 0;
 
                         if (x == 3) {
@@ -1107,7 +1107,7 @@ public class SplatEngine {
                     }
                 }
                 count = 0;
-                System.out.printf("\n75%c to 100%c ", 37, 37);
+                System.out.print("\n75% to 100% ");
                 z = (int) (th * (double) (maxNorth - minNorth));
                 for (lat = (double) minNorth, x = 0, y = 0; lat < (double) maxNorth; y++, lat = (double) minNorth + (dpp * (double) y)) {
 
@@ -1117,7 +1117,7 @@ public class SplatEngine {
                     count++;
 
                     if (count == z) {
-                        System.out.printf("%c", symbol[x]);
+                        System.out.print(symbol[x]);
                         count = 0;
 
                         if (x == 3) {

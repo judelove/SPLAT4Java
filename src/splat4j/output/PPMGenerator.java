@@ -30,7 +30,7 @@ public class PPMGenerator {
     Configuration config;
     SplatEngine splat;
     double conversion, one_over_gamma, lat, lon,
-            north, south, east, west,  max_elevation, min_elevation;
+            north, south, east, west, max_elevation, min_elevation;
     boolean found, kml, geo, ngs, cityorcounty;
     double width, height, terrain;
     int loss, signal, match, mask, indx, x, y, z, x0 = 0, y0 = 0, red = 0, green = 0, blue = 0, hundreds, tens, units;
@@ -55,10 +55,10 @@ public class PPMGenerator {
         try {
             File mapFile = new File(baseFilename + ".ppm");
             wri = new FileOutputStream(mapFile);
-            wri.write(String.format("P6\n%s %s\n255\n", (int)width, (int)height).getBytes());
+            wri.write(String.format("P6\n%s %s\n255\n", (int) width, (int) height).getBytes());
             System.out.printf("\nWriting \"%s\" (%sx%s pixmap image)... ", baseFilename + ".ppm", width, height);
             //fflush(stdout);
-            for (y = 0, lat = north; y < (int) height; y++, lat = north - (splat.getDpp() * (double) y)) { 
+            for (y = 0, lat = north; y < (int) height; y++, lat = north - (splat.getDpp() * (double) y)) {
                 for (x = 0, lon = splat.getMaxWest(); x < (int) width; x++, lon = (double) splat.getMaxWest() - (splat.getDpp() * (double) x)) {
                     if (lon < 0.0) {
                         lon += 360.0;
@@ -78,105 +78,103 @@ public class PPMGenerator {
                     if (found) {
                         try {
                             mask = splat.getDem()[indx].getMask()[x0][y0];
-                            if(mask > 0)
-                            {
+                            if (mask > 0) {
                                 int k = 1;
                             }
 
                             if ((mask & 2) > 0) /* Text Labels: Red */ {
                                 //wri.write(String.format("%d%d%d", 255, 0, 0));
                             } else if ((mask & 4) > 0) /* County Boundaries: Light Cyan */ {
-                                wri.write(new byte[] {(byte)128, (byte)128, (byte)255});
+                                wri.write(new byte[]{(byte) 128, (byte) 128, (byte) 255});
                             } else {
-                                int k= mask & 57;
+                                int k = mask & 57;
                                 switch (mask & 57) {
                                     case 1:
                                         /* TX1: Green */
-                                        wri.write(new byte[] { (byte)0, (byte)255, (byte)0});
+                                        wri.write(new byte[]{(byte) 0, (byte) 255, (byte) 0});
                                         break;
 
                                     case 8:
                                         /* TX2: Cyan */
-                                       // wri.write(String.format("%d%d%d", 0, 255, 255));
+                                        wri.write(new byte[]{(byte) 0, (byte) 255, (byte) 255});
                                         break;
 
                                     case 9:
                                         /* TX1 + TX2: Yellow */
-                                       // wri.write(String.format("%d%d%d", 255, 255, 0));
+                                        wri.write(new byte[]{(byte) 255, (byte) 255, (byte) 0});
                                         break;
 
                                     case 16:
                                         /* TX3: Medium Violet */
-                                      //  wri.write(String.format("%d%d%d", 147, 112, 219));
+                                        wri.write(new byte[]{(byte) 147, (byte) 112, (byte) 219});
                                         break;
 
                                     case 17:
                                         /* TX1 + TX3: Pink */
-                                       // wri.write(String.format("%d%d%d", 255, 192, 203));
+                                        wri.write(new byte[]{(byte) 255, (byte) 192, (byte) 203});
                                         break;
 
                                     case 24:
                                         /* TX2 + TX3: Orange */
-                                       // wri.write(String.format("%d%d%d", 255, 165, 0));
+                                        wri.write(new byte[]{(byte) 255, (byte) 165, (byte) 0});
                                         break;
 
                                     case 25:
                                         /* TX1 + TX2 + TX3: Dark Green */
-                                      //  wri.write(String.format("%d%d%d", 0, 100, 0));
+                                        wri.write(new byte[]{(byte) 0, (byte) 100, (byte) 0});
                                         break;
 
                                     case 32:
                                         /* TX4: Sienna 1 */
-                                     //   wri.write(String.format("%d%d%d", 255, 130, 71));
+                                        wri.write(new byte[]{(byte) 255, (byte) 130, (byte) 71});
                                         break;
 
                                     case 33:
                                         /* TX1 + TX4: Green Yellow */
-                                     //   wri.write(String.format("%d%d%d", 173, 255, 47));
+                                        wri.write(new byte[]{(byte) 173, (byte) 255, (byte) 47});
                                         break;
 
                                     case 40:
                                         /* TX2 + TX4: Dark Sea Green 1 */
-                                     //   wri.write(String.format("%d%d%d", 193, 255, 193));
+                                        wri.write(new byte[]{(byte) 193, (byte) 255, (byte) 193});
                                         break;
 
                                     case 41:
                                         /* TX1 + TX2 + TX4: Blanched Almond */
-                                    //    wri.write(String.format("%d%d%d", 255, 235, 205));
+                                        wri.write(new byte[]{(byte) 255, (byte) 235, (byte) 205});
                                         break;
 
                                     case 48:
                                         /* TX3 + TX4: Dark Turquoise */
-                                     //   wri.write(String.format("%d%d%d", 0, 206, 209));
+                                        wri.write(new byte[]{(byte) 0, (byte) 206, (byte) 209});
                                         break;
 
                                     case 49:
                                         /* TX1 + TX3 + TX4: Medium Spring Green */
-                                      //  wri.write(String.format("%d%d%d", 0, 250, 154));
+                                        wri.write(new byte[]{(byte) 0, (byte) 250, (byte) 154});
                                         break;
 
                                     case 56:
                                         /* TX2 + TX3 + TX4: Tan */
-                                      //  wri.write(String.format("%d%d%d", 210, 180, 140));
+                                        wri.write(new byte[]{(byte) 210, (byte) 180, (byte) 140});
                                         break;
 
                                     case 57:
                                         /* TX1 + TX2 + TX3 + TX4: Gold2 */
-                                      //  wri.write(String.format("%d%d%d", 238, 201, 0));
+                                        wri.write(new byte[]{(byte) 238, (byte) 201, (byte) 0});
                                         break;
 
                                     default:
                                         if (ngs) /* No terrain */ {
-                                       //     wri.write(String.format("%d%d%d", 255, 255, 255));
+                                            wri.write(new byte[]{(byte) 255, (byte) 255, (byte) 255});
                                         } else {
                                             /* Sea-level: Medium Blue */
                                             if (splat.getDem()[indx].getData(x0, y0) == 0) {
-                                        //        wri.write(String.format("%d%d%d", 0, 0, 170));
+                                                wri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
                                             } else {
                                                 /* Elevation: Greyscale */
                                                 terrain = (0.5 + Math.pow((double) (splat.getDem()[indx].getData(x0, y0) - splat.getMinElevation()), one_over_gamma) * conversion);
-                                                String str = String.format("%d%d%d", (int)terrain, (int)terrain, (int)terrain);
-                                                wri.write(new byte[]{(byte)terrain, (byte)terrain, (byte)terrain});
+                                                wri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
                                             }
                                         }
                                 }
@@ -192,7 +190,7 @@ public class PPMGenerator {
                     }
                 }
             }
-             System.out.print("Done!\n");
+            System.out.print("Done!\n");
         } catch (IOException ex) {
             Logger.getLogger(PPMGenerator.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -214,9 +212,9 @@ public class PPMGenerator {
 
     private void setGeoBounds() {
 
-        splat.setMinWest((int)(splat.getMinWest() + splat.getDpp()));
+        splat.setMinWest((int) (splat.getMinWest() + splat.getDpp()));
         if (splat.getMinWest() > 360.0) {
-            splat.setMinWest((int)(splat.getMinWest()- 360.0));
+            splat.setMinWest((int) (splat.getMinWest() - 360.0));
         }
         north = (double) splat.getMaxNorth() - splat.getDpp();
         south = (double) splat.getMinNorth();
@@ -236,10 +234,10 @@ public class PPMGenerator {
             writeKMLFile(baseFilename, xmtr, north, south, east, west, x);
         }
 
-        FileWriter mpWri = null;
+        FileOutputStream mpWri = null;
         try {
             File mapFile = new File(baseFilename + ".ppm");
-            mpWri = new FileWriter(mapFile);
+            mpWri = new FileOutputStream(mapFile);
             notifyPPMFileWrite(mpWri, baseFilename);
             for (y = 0, lat = north; y < (int) height; y++, lat = north - (splat.getDpp() * (double) y)) {
                 for (x = 0, lon = splat.getMaxWest(); x < (int) width; x++, lon = splat.getMaxWest() - (splat.getDpp() * (double) x)) {
@@ -295,16 +293,17 @@ public class PPMGenerator {
                             /* Text Labels: Red or otherwise */
 
                             if (red >= 180 && green <= 75 && blue <= 75 && loss != 0) {
-                                mpWri.write(String.format("%c%c%c", 255 ^ red, 255 ^ green, 255 ^ blue));
+                                mpWri.write(new byte[]{(byte) (255 ^ red), (byte) (255 ^ green), (byte) (255 ^ blue)});
+
                             } else {
-                                mpWri.write(String.format("%c%c%c", 255, 0, 0));
+                                mpWri.write(new byte[]{(byte) 255, (byte) 0, (byte) 0});
+                                //mpWri.write(String.format("%c%c%c", 255, 0, 0));
                             }
 
                             cityorcounty = true;
                         } else if ((mask & 4) > 0) {
                             /* County Boundaries: Black */
-
-                            mpWri.write(String.format("%c%c%c", 0, 0, 0));
+                            mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
 
                             cityorcounty = true;
                         }
@@ -312,29 +311,35 @@ public class PPMGenerator {
                         if (!cityorcounty) {
                             if (loss == 0 || (splat.getContourThreshold() != 0 && loss > Math.abs(splat.getContourThreshold()))) {
                                 if (ngs) /* No terrain */ {
-                                    mpWri.write(String.format("%c%c%c", 255, 255, 255));
+                                    mpWri.write(new byte[]{(byte) 255, (byte) 255, (byte) 255});
+                                    //mpWri.write(String.format("%c%c%c", 255, 255, 255));
                                 } else {
                                     /* Display land or sea elevation */
 
                                     if (dem[indx].getData()[x0][y0] == 0) {
-                                        mpWri.write(String.format("%c%c%c", 0, 0, 170));
+                                        mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
+                                        //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                     } else {
                                         terrain = (int) (0.5 + Math.pow((double) (dem[indx].getData()[x0][y0] - min_elevation), one_over_gamma) * conversion);
-                                        mpWri.write(String.format("%s%s%s", terrain, terrain, terrain));
+                                        mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
+                                        // mpWri.write(String.format("%s%s%s", terrain, terrain, terrain));
                                     }
                                 }
                             } else {
                                 /* Plot path loss in color */
 
                                 if (red != 0 || green != 0 || blue != 0) {
-                                    mpWri.write(String.format("%c%c%c", red, green, blue));
+                                    mpWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
+                                    //mpWri.write(String.format("%c%c%c", red, green, blue));
                                 } else /* terrain / sea-level */ {
                                     if (dem[indx].getData()[x0][y0] == 0) {
-                                        mpWri.write(String.format("%c%c%c", 0, 0, 170));
+                                        mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
+                                        //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                     } else {
                                         /* Elevation: Greyscale */
                                         terrain = (int) (0.5 + Math.pow((double) (dem[indx].getData()[x0][y0] - min_elevation), one_over_gamma) * conversion);
-                                        mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
+                                        mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
+                                        //mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
                                     }
                                 }
                             }
@@ -343,7 +348,8 @@ public class PPMGenerator {
                         /* We should never get here, but if */
  /* we do, display the region as black */
 
-                        mpWri.write(String.format("%c%c%c", 0, 0, 0));
+                        mpWri.write(new byte[]{(byte) 255, (byte) 0, (byte) 0});
+                        //mpWri.write(String.format("%c%c%c", 0, 0, 0));
                     }
                 }
             }
@@ -411,13 +417,14 @@ public class PPMGenerator {
                         }
 
                         if (indx > region.getLevels()) {
-                            mpWri.write(String.format("%c%c%c", 0, 0, 0));
+                            mpWri.write(new byte[]{(byte) 255, (byte) 0, (byte) 0});
                         } else {
                             red = region.getColor()[indx][0];
                             green = region.getColor()[indx][1];
                             blue = region.getColor()[indx][2];
 
-                            mpWri.write(String.format("%c%c%c", red, green, blue));
+                            mpWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
+                            //mpWri.write(String.format("%c%c%c", red, green, blue));
                         }
                     }
                 }
@@ -426,12 +433,12 @@ public class PPMGenerator {
                 /* Write colorkey image file */
 
                 File ckFile = new File(baseFilename + "-ck.ppm");
-                FileWriter ckWri = new FileWriter(ckFile);
+                FileOutputStream ckWri = new FileOutputStream(ckFile);
 
                 height = 30 * region.getLevels();
                 width = 100;
 
-                ckWri.write(String.format("P6\n%s %s\n255\n", width, height));
+                ckWri.write(String.format("P6\n%s %s\n255\n", (int) width, (int) height).getBytes());
 
                 for (y0 = 0; y0 < (int) height; y0++) {
                     for (x0 = 0; x0 < (int) width; x0++) {
@@ -490,13 +497,13 @@ public class PPMGenerator {
                         }
 
                         if (indx > region.getLevels()) {
-                            ckWri.write(String.format("%d%d%d", 0, 0, 0));
+                            ckWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
                         } else {
                             red = region.getColor()[indx][0];
                             green = region.getColor()[indx][1];
                             blue = region.getColor()[indx][2];
 
-                            ckWri.write(String.format("%d%d%d", red, green, blue));
+                            ckWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
                         }
                     }
                 }
@@ -514,17 +521,17 @@ public class PPMGenerator {
         }
     }
 
-    private void notifyPPMFileWrite(FileWriter mpWri, String baseFilename) throws IOException {
+    private void notifyPPMFileWrite(FileOutputStream mpWri, String baseFilename) throws IOException {
         if (this.kml || this.geo) {
             /* No bottom legend */
 
-            mpWri.write(String.format("P6\n%s %s\n255\n", width, height));
-            System.out.printf("\nWriting \"%s\" (%sx%s pixmap image)... ", baseFilename + ".ppm", width, height);
+            mpWri.write(String.format("P6\n%s %s\n255\n", (int) width, (int) height).getBytes());
+            System.out.printf("\nWriting \"%s\" (%sx%s pixmap image)... ", baseFilename + ".ppm", (int) width, (int) height);
         } else {
             /* Allow space for bottom legend */
 
-            mpWri.write(String.format("P6\n%s %s\n255\n", width, height + 30));
-            System.out.printf("\nWriting \"%s\" (%sx%s pixmap image)... ", baseFilename + ".ppm", width, height + 30);
+            mpWri.write(String.format("P6\n%s %s\n255\n", (int) width, (int) height).getBytes());
+            System.out.printf("\nWriting \"%s\" (%sx%s pixmap image)... ", baseFilename + ".ppm", (int) width, (int) height + 30);
         }
     }
 
@@ -1063,10 +1070,10 @@ public class PPMGenerator {
             writeKMLFile(baseFilename, xmtr, north, south, east, west, x);
         }
 
-        FileWriter mpWri = null;
+        FileOutputStream mpWri = null;
         try {
             File mapFile = new File(baseFilename + ".ppm");
-            mpWri = new FileWriter(mapFile);
+            mpWri = new FileOutputStream(mapFile);
             notifyPPMFileWrite(mpWri, baseFilename);
 
             for (y = 0, lat = north; y < (int) height; y++, lat = north - (splat.getDpp() * (double) y)) {
@@ -1123,16 +1130,19 @@ public class PPMGenerator {
                             /* Text Labels: Red or otherwise */
 
                             if (red >= 180 && green <= 75 && blue <= 75) {
-                                mpWri.write(String.format("%c%c%c", 255 ^ red, 255 ^ green, 255 ^ blue));
+                                mpWri.write(new byte[]{(byte) (255 ^ red), (byte) (255 ^ green), (byte) (255 ^ blue)});
+                                //  mpWri.write(String.format("%c%c%c", , 255 ^ green, ));
                             } else {
-                                mpWri.write(String.format("%c%c%c", 255, 0, 0));
+                                mpWri.write(new byte[]{(byte) 255, (byte) 0, (byte) 0});
+                                //mpWri.write(String.format("%c%c%c", 255, 0, 0));
                             }
 
                             cityorcounty = true;
                         } else if ((mask & 4) > 0) {
                             /* County Boundaries: Black */
 
-                            mpWri.write(String.format("%c%c%c", 0, 0, 0));
+                            mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
+                            //mpWri.write(String.format("%c%c%c", 0, 0, 0));
 
                             cityorcounty = true;
                         }
@@ -1140,32 +1150,39 @@ public class PPMGenerator {
                         if (!cityorcounty) {
                             if (splat.getContourThreshold() != 0 && signal < splat.getContourThreshold()) {
                                 if (ngs) {
-                                    mpWri.write(String.format("%c%c%c", 255, 255, 255));
+                                    mpWri.write(new byte[]{(byte) 255, (byte) 255, (byte) 255});
+                                    //mpWri.write(String.format("%c%c%c", 255, 255, 255));
                                 } else {
                                     /* Display land or sea elevation */
 
                                     if (dem[indx].getData(x0, y0) == 0) {
-                                        mpWri.write(String.format("%c%c%c", 0, 0, 170));
+                                        mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
+                                        //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                     } else {
                                         terrain = (0.5 + Math.pow((double) (dem[indx].getData(x0, y0) - min_elevation), one_over_gamma) * conversion);
-                                        mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
+                                        mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
+                                        //mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
                                     }
                                 }
                             } else {
                                 /* Plot field strength regions in color */
 
                                 if (red != 0 || green != 0 || blue != 0) {
-                                    mpWri.write(String.format("%c%c%c", red, green, blue));
+                                    mpWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
+                                    //mpWri.write(String.format("%c%c%c", red, green, blue));
                                 } else /* terrain / sea-level */ {
                                     if (ngs) {
-                                        mpWri.write(String.format("%c%c%c", 255, 255, 255));
+                                        mpWri.write(new byte[]{(byte) 255, (byte) 255, (byte) 255});
+                                        //mpWri.write(String.format("%c%c%c", 255, 255, 255));
                                     } else {
                                         if (dem[indx].getData(x0, y0) == 0) {
-                                            mpWri.write(String.format("%c%c%c", 0, 0, 170));
+                                            mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
+                                            //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                         } else {
                                             /* Elevation: Greyscale */
                                             terrain = (0.5 + Math.pow((double) (dem[indx].getData(x0, y0) - min_elevation), one_over_gamma) * conversion);
-                                            mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
+                                            mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
+                                            //mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
                                         }
                                     }
                                 }
@@ -1174,8 +1191,8 @@ public class PPMGenerator {
                     } else {
                         /* We should never get here, but if */
  /* we do, display the region as black */
-
-                        mpWri.write(String.format("%c%c%c", 0, 0, 0));
+                        mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
+                        //mpWri.write(String.format("%c%c%c", 0, 0, 0));
                     }
                 }
             }
@@ -1274,13 +1291,14 @@ public class PPMGenerator {
                                     }
 
                                     if (indx > region.getLevels()) {
-                                        mpWri.write(String.format("%c%c%c", 0, 0, 0));
+                                        mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
+                                        //mpWri.write(String.format("%c%c%c", 0, 0, 0));
                                     } else {
                                         red = region.getColor()[indx][0];
                                         green = region.getColor()[indx][1];
                                         blue = region.getColor()[indx][2];
-
-                                        mpWri.write(String.format("%c%c%c", red, green, blue));
+                                        mpWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
+                                        //mpWri.write(String.format("%c%c%c", red, green, blue));
                                     }
                                 }
                             }
@@ -1293,13 +1311,14 @@ public class PPMGenerator {
         }
 
         if (kml) {
-            FileWriter ckWri = null;
+            FileOutputStream ckWri = null;
             try {
                 File ckFile = new File(baseFilename + "-ck.ppm");
-                ckWri = new FileWriter(ckFile);
+                ckWri = new FileOutputStream(ckFile);
                 height = 30 * region.getLevels();
                 width = 100;
-                ckWri.write(String.format("P6\n%s %s\n255\n", width, height));
+                ckWri.write(String.format("P6\n%s %s\n255\n", (int) width, (int) height).getBytes());
+                int k = 0;
                 for (y0 = 0; y0 < (int) height; y0++) {
                     for (x0 = 0; x0 < (int) width; x0++) {
                         indx = y0 / 30;
@@ -1323,82 +1342,82 @@ public class PPMGenerator {
                         if ((y0 % 30) >= 8 && (y0 % 30) <= 23) {
                             if (hundreds > 0) {
                                 if (x >= 5 && x <= 12) {
-                                    if ((FontData.get(16 * (hundreds + '0') + ((y0 % 30) - 8)
-                                    ) & (128 >> (x - 5))) > 0) {
-                                        indx = 255;
-                                    }
-                                }
-
-                                if (tens > 0 || hundreds > 0) {
-                                    if (x >= 13 && x <= 20) {
-                                        if ((FontData.get(16 * (tens + '0') + ((y0 % 30) - 8)
-                                        ) & (128 >> (x - 13))) > 0) {
-                                            indx = 255;
-                                        }
-                                    }
-                                }
-
-                                if (x >= 21 && x <= 28) {
-                                    if ((FontData.get(16 * (units + '0') + ((y0 % 30) - 8)
-                                    ) & (128 >> (x - 21))) > 0) {
-                                        indx = 255;
-                                    }
-                                }
-
-                                if (x >= 36 && x <= 43) {
-                                    if ((FontData.get(16 * ('d') + ((y0 % 30) - 8)
-                                    ) & (128 >> (x - 36))) > 0) {
-                                        indx = 255;
-                                    }
-                                }
-
-                                if (x >= 44 && x <= 51) {
-                                    if ((FontData.get(16 * ('B') + ((y0 % 30) - 8)
-                                    ) & (128 >> (x - 44))) > 0) {
-                                        indx = 255;
-                                    }
-                                }
-
-                                if (x >= 52 && x <= 59) {
-                                    if ((FontData.get(16 * (230) + ((y0 % 30) - 8)
-                                    ) & (128 >> (x - 52))) > 0) {
-                                        indx = 255;
-                                    }
-                                }
-
-                                if (x >= 60 && x <= 67) {
-                                    if ((FontData.get(16 * ('V') + ((y0 % 30) - 8)
-                                    ) & (128 >> (x - 60))) > 0) {
-                                        indx = 255;
-                                    }
-                                }
-
-                                if (x >= 68 && x <= 75) {
-                                    if ((FontData.get(16 * ('/') + ((y0 % 30) - 8)
-                                    ) & (128 >> (x - 68))) > 0) {
-                                        indx = 255;
-                                    }
-                                }
-
-                                if (x >= 76 && x <= 83) {
-                                    if ((FontData.get(16 * ('m') + ((y0 % 30) - 8)
-                                    ) & (128 >> (x - 76))) > 0) {
+                                    if ((FontData.get(16 * (hundreds + '0') + ((y0 % 30) - 8)) & (128 >> (x - 5))) > 0) {
                                         indx = 255;
                                     }
                                 }
                             }
 
-                            if (indx > region.getLevels()) {
-                                ckWri.write(String.format("%c%c%c", 0, 0, 0));
-                            } else {
-                                red = region.getColor()[indx][0];
-                                green = region.getColor()[indx][1];
-                                blue = region.getColor()[indx][2];
+                            if (tens > 0 || hundreds > 0) {
+                                if (x >= 13 && x <= 20) {
+                                    if ((FontData.get(16 * (tens + '0') + ((y0 % 30) - 8)
+                                    ) & (128 >> (x - 13))) > 0) {
+                                        indx = 255;
+                                    }
+                                }
+                            }
 
-                                ckWri.write(String.format("%c%c%c", red, green, blue));
+                            if (x >= 21 && x <= 28) {
+                                if ((FontData.get(16 * (units + '0') + ((y0 % 30) - 8)
+                                ) & (128 >> (x - 21))) > 0) {
+                                    indx = 255;
+                                }
+                            }
+
+                            if (x >= 36 && x <= 43) {
+                                if ((FontData.get(16 * ('d') + ((y0 % 30) - 8)
+                                ) & (128 >> (x - 36))) > 0) {
+                                    indx = 255;
+                                }
+                            }
+
+                            if (x >= 44 && x <= 51) {
+                                if ((FontData.get(16 * ('B') + ((y0 % 30) - 8)
+                                ) & (128 >> (x - 44))) > 0) {
+                                    indx = 255;
+                                }
+                            }
+
+                            if (x >= 52 && x <= 59) {
+                                if ((FontData.get(16 * (230) + ((y0 % 30) - 8)
+                                ) & (128 >> (x - 52))) > 0) {
+                                    indx = 255;
+                                }
+                            }
+
+                            if (x >= 60 && x <= 67) {
+                                if ((FontData.get(16 * ('V') + ((y0 % 30) - 8)
+                                ) & (128 >> (x - 60))) > 0) {
+                                    indx = 255;
+                                }
+                            }
+
+                            if (x >= 68 && x <= 75) {
+                                if ((FontData.get(16 * ('/') + ((y0 % 30) - 8)
+                                ) & (128 >> (x - 68))) > 0) {
+                                    indx = 255;
+                                }
+                            }
+
+                            if (x >= 76 && x <= 83) {
+                                if ((FontData.get(16 * ('m') + ((y0 % 30) - 8)
+                                ) & (128 >> (x - 76))) > 0) {
+                                    indx = 255;
+                                }
                             }
                         }
+
+                        if (indx > region.getLevels()) {
+                            ckWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
+                        } else {
+                            red = region.getColor()[indx][0];
+                            green = region.getColor()[indx][1];
+                            blue = region.getColor()[indx][2];
+                            ckWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
+                            //ckWri.write(String.format("%c%c%c", red, green, blue));
+                        }
                     }
+                    k++;
 
                 }
                 System.out.print("Done!\n");
@@ -1428,10 +1447,10 @@ public class PPMGenerator {
             writeKMLFile(baseFilename, xmtr, north, south, east, west, x);
         }
 
-        FileWriter mpWri = null;
+        FileOutputStream mpWri = null;
         try {
             File mapFile = new File(baseFilename + ".ppm");
-            mpWri = new FileWriter(mapFile);
+            mpWri = new FileOutputStream(mapFile);
             notifyPPMFileWrite(mpWri, baseFilename);
 
             for (y = 0, lat = north; y < (int) height; y++, lat = north - (splat.getDpp() * (double) y)) {
@@ -1488,16 +1507,19 @@ public class PPMGenerator {
                             /* Text Labels: Red or otherwise */
 
                             if (red >= 180 && green <= 75 && blue <= 75 && dBm != 0) {
-                                mpWri.write(String.format("%c%c%c", 255 ^ red, 255 ^ green, 255 ^ blue));
+                                mpWri.write(new byte[]{(byte) (255 ^ red), (byte) (255 ^ green), (byte) (255 ^ green)});
+                                //mpWri.write(String.format("%c%c%c", 255 ^ red, 255 ^ green, 255 ^ blue));
                             } else {
-                                mpWri.write(String.format("%c%c%c", 255, 0, 0));
+                                mpWri.write(new byte[]{(byte) 255, (byte) 0, (byte) 0});
+                                //mpWri.write(String.format("%c%c%c", 255, 0, 0));
                             }
 
                             cityorcounty = true;
                         } else if ((mask & 4) > 0) {
                             /* County Boundaries: Black */
 
-                            mpWri.write(String.format("%c%c%c", 0, 0, 0));
+                            //mpWri.write(String.format("%c%c%c", 0, 0, 0));
+                            mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
 
                             cityorcounty = true;
                         }
@@ -1505,32 +1527,39 @@ public class PPMGenerator {
                         if (!cityorcounty) {
                             if (splat.getContourThreshold() != 0 && dBm < splat.getContourThreshold()) {
                                 if (ngs) /* No terrain */ {
-                                    mpWri.write(String.format("%c%c%c", 255, 255, 255));
+                                    mpWri.write(new byte[]{(byte) 255, (byte) 255, (byte) 255});
+                                    //mpWri.write(String.format("%c%c%c", 255, 255, 255));
                                 } else {
                                     /* Display land or sea elevation */
 
                                     if (dem[indx].getData(x0, y0) == 0) {
-                                        mpWri.write(String.format("%c%c%c", 0, 0, 170));
+                                        mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
+                                        //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                     } else {
                                         terrain = (0.5 + Math.pow((double) (dem[indx].getData(x0, y0) - min_elevation), one_over_gamma) * conversion);
-                                        mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
+                                        mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
+                                        //mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
                                     }
                                 }
                             } else {
                                 /* Plot signal power level regions in color */
 
                                 if (red != 0 || green != 0 || blue != 0) {
-                                    mpWri.write(String.format("%c%c%c", red, green, blue));
+                                    mpWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
+                                    //mpWri.write(String.format("%c%c%c", red, green, blue));
                                 } else /* terrain / sea-level */ {
                                     if (ngs) {
-                                        mpWri.write(String.format("%c%c%c", 255, 255, 255));
+                                        mpWri.write(new byte[]{(byte) 255, (byte) 255, (byte) 255});
+                                        //mpWri.write(String.format("%c%c%c", 255, 255, 255));
                                     } else {
                                         if (dem[indx].getData(x0, y0) == 0) {
-                                            mpWri.write(String.format("%c%c%c", 0, 0, 170));
+                                            mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
+                                            //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                         } else {
                                             /* Elevation: Greyscale */
                                             terrain = (0.5 + Math.pow((double) (dem[indx].getData(x0, y0) - min_elevation), one_over_gamma) * conversion);
-                                            mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
+                                            mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
+                                            // mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
                                         }
                                     }
                                 }
@@ -1539,8 +1568,8 @@ public class PPMGenerator {
                     } else {
                         /* We should never get here, but if */
  /* we do, display the region as black */
-
-                        mpWri.write(String.format("%c%c%c", 0, 0, 0));
+                        mpWri.write(new byte[]{(byte) 255, (byte) 255, (byte) 255});
+                        //mpWri.write(String.format("%c%c%c", 0, 0, 0));
                     }
                 }
             }
@@ -1660,13 +1689,14 @@ public class PPMGenerator {
                                                                         }
 
                                                                         if (indx > region.getLevels()) {
-                                                                            mpWri.write(String.format("%c%c%c", 0, 0, 0));
+                                                                            mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
+                                                                            //mpWri.write(String.format("%c%c%c", 0, 0, 0));
                                                                         } else {
                                                                             red = region.getColor()[indx][0];
                                                                             green = region.getColor()[indx][1];
                                                                             blue = region.getColor()[indx][2];
-
-                                                                            mpWri.write(String.format("%c%c%c", red, green, blue));
+                                                                            mpWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
+                                                                            //mpWri.write(String.format("%c%c%c", red, green, blue));
                                                                         }
                                                                     }
                                                                 }
@@ -1691,12 +1721,12 @@ public class PPMGenerator {
         if (kml) {
             try {
                 /* Write colorkey image file */
-                FileWriter ckWri;
+                FileOutputStream ckWri;
                 File ckFile = new File(baseFilename + "-ck.ppm");
-                ckWri = new FileWriter(ckFile);
+                ckWri = new FileOutputStream(ckFile);
                 height = 30 * region.getLevels();
                 width = 100;
-                ckWri.write(String.format("P6\n%s %s\n255\n", width, height));
+                ckWri.write(String.format("P6\n%s %s\n255\n", (int) width, (int) height).getBytes());
 
                 for (y0 = 0; y0 < (int) height; y0++) {
                     for (x0 = 0; x0 < (int) width; x0++) {
@@ -1808,13 +1838,14 @@ public class PPMGenerator {
                                                 }
 
                                                 if (indx > region.getLevels()) {
-                                                    ckWri.write(String.format("%c%c%c", 0, 0, 0));
+                                                    ckWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
+                                                    //ckWri.write(String.format("%c%c%c", 0, 0, 0));
                                                 } else {
                                                     red = region.getColor()[indx][0];
                                                     green = region.getColor()[indx][1];
                                                     blue = region.getColor()[indx][2];
-
-                                                    ckWri.write(String.format("%c%c%c", red, green, blue));
+                                                    ckWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
+                                                    //ckWri.write(String.format("%c%c%c", red, green, blue));
                                                 }
                                             }
                                         }
@@ -1858,6 +1889,7 @@ public class PPMGenerator {
 
         if (x0 == x1) {
             return y0;
+
         }
 
         delta_y = (double) (y0 - y1);

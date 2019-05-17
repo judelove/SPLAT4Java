@@ -275,10 +275,10 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
                 double al = txSites.get(z).getAlt();
                 double el = Utils.getElevation(txSites.get(z), splat, config);
 
-                tx_range = Math.sqrt(1.5 * al + el);
+                tx_range = Math.sqrt(1.5 * (al + el));
 
                 if (splat.isLRmap()) {
-                    rx_range = Math.sqrt(1.5 * altitudeLR);
+                    rx_range = Math.sqrt(1.5 * splat.getLRaltitude());
                 } else {
                     rx_range = Math.sqrt(1.5 * splat.getAltitude());
                 }
@@ -582,7 +582,7 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
                         splat.PlotLOSMap(txSites.get(txSites.size() -1), splat.getAltitude());
                     } else{
                         new LRParameters(splat).loadLRFile(txSites.get(x).getName());
-                        splat.PlotLRMap(txSites.get(x), altitudeLR, ano_filename);
+                        splat.PlotLRMap(txSites.get(x), splat.getLRaltitude(), ano_filename);
                     }
 
                      new ReportGenerator(config, splat).SiteReport(txSites.get(x)); //SiteReport(tx_site[x]);

@@ -1945,7 +1945,7 @@ public class ITWOM3 {
             xa = xa + xb;
         }
 
-        d1thx2v = qtile(n - 1, Arrays.copyOfRange(s, 2, s.length - 1), ka - 1) - qtile(n - 1, Arrays.copyOfRange(s, 2, s.length - 1), kb - 1);
+        d1thx2v = qtile(n - 1, Arrays.copyOfRange(s, 2, s.length), ka - 1) - qtile(n - 1, Arrays.copyOfRange(s, 2, s.length), kb - 1);
         d1thx2v /= 1.0 - 0.8 * Math.exp(-(x2 - x1) / 50.0e3);
         //delete[] s;
         return d1thx2v;

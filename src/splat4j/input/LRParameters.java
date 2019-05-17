@@ -139,6 +139,7 @@ public class LRParameters {
                 }
 
             }
+            this.splat.setLr(lr);
         }
     }
     
