@@ -15,8 +15,8 @@ public class Dem {
     private int maxNorth;
     private int minWest;
     private int maxWest;
-    private int maxEl;
-    private int minEl;
+    private int maxEl = -32768;
+    private int minEl = 32768;
     private int[][] data;
     private int[][] mask;
     private int[][] signal;

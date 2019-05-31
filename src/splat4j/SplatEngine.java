@@ -40,7 +40,7 @@ public class SplatEngine {
     private double dpp, altitude, LRaltitude;
     private double ppd;
     private double fzoneClearance = 0.6;
-    private double forcedFreq;
+    private double forcedFreq = -1;
     private double clutter;
     private int minNorth = 90;
     private int maxNorth = -90;
@@ -52,8 +52,6 @@ public class SplatEngine {
     private int minElevation = 32768;
     private int bzerror;
     private int contourThreshold;
-    private int gotElevationPattern;
-    private int gotAzimuthPattern;
     private double[] elev;  
     int mask_value =1;
     private boolean noSitesReport, coverage, LRmap, terrain_plot, elevation_plot, height_plot, map, longley_plot, norm, topomap, pt2pt_mode, area_model, ngs, nolospath, fresnel_plot, command_line_log, metric, kml, dbm, geo, smoothContours, olditm, smooth_contours, area_mode, gpsav;
@@ -578,7 +576,7 @@ public class SplatEngine {
 
         /* Copy elevations plus clutter along path into the elev[] array. */
         for (x = 1; x < path.getLength() - 1; x++) {
-            getElev()[x + 2] = (path.getElevation()[x] == 0.0 ? path.getElevation()[x] * getConfig().METERS_PER_FOOT : (getClutter() + path.getElevation()[x]) * getConfig().METERS_PER_FOOT);
+            elev[x + 2] = (path.getElevation()[x] == 0.0 ? path.getElevation()[x] * getConfig().METERS_PER_FOOT : (getClutter() + path.getElevation()[x]) * getConfig().METERS_PER_FOOT);
         }
 
         /* Copy ending points without clutter */
@@ -617,7 +615,7 @@ public class SplatEngine {
                     cos_rcvr_angle = -1.0;
                 }
 
-                if (lr.isGot_elevation_pattern()) // (got_elevation_pattern || fd!=null)
+                if ( wri != null || lr.isGot_elevation_pattern()) // (got_elevation_pattern || fd!=null)
                 {
                     /* Determine the elevation angle to the first obstruction
 				   along the path IF elevation pattern data is available
@@ -656,6 +654,8 @@ public class SplatEngine {
                     if (block) {
                         elevation = ((Math.acos(cos_test_angle)) / config.DEG2RAD) - 90.0;
                     } else {
+                        double k = (Math.acos(cos_rcvr_angle));
+                        double j = (Math.acos(cos_rcvr_angle)) / config.DEG2RAD;
                         elevation = ((Math.acos(cos_rcvr_angle)) / config.DEG2RAD) - 90.0;
                     }
                 }
@@ -665,18 +665,18 @@ public class SplatEngine {
 			   starting at y=2 (number_of_points = 1), the
 			   shortest distance terrain can play a role in
 			   path loss. */
-                getElev()[0] = y - 1;
+                elev[0] = y - 1;
                 /* (number of points - 1) */
 
  /* Distance between elevation samples */
-                getElev()[1] = config.METERS_PER_MILE * (path.getDistance()[y] - path.getDistance()[y - 1]);
+                elev[1] = config.METERS_PER_MILE * (path.getDistance()[y] - path.getDistance()[y - 1]);
 
                 ITWOMResult result = null;
                 if (olditm) {
-                  result =  new ITWOM3().point_to_point_ITM(getElev(), source.getAlt() * getConfig().METERS_PER_FOOT,
+                  result =  new ITWOM3().point_to_point_ITM(elev, source.getAlt() * getConfig().METERS_PER_FOOT,
                             destination.getAlt() * config.METERS_PER_FOOT, lr.getEps_dielect(), lr.getSgm_conductivity(), lr.getEno_ns_surfref(), lr.getFrq_mhz(), lr.getRadio_climate(), lr.getPol(), lr.getConf(), lr.getRel());
                 } else {
-                 result =   new ITWOM3().point_to_point(getElev(), source.getAlt() * getConfig().METERS_PER_FOOT,
+                 result =   new ITWOM3().point_to_point(elev, source.getAlt() * getConfig().METERS_PER_FOOT,
                             destination.getAlt() * config.METERS_PER_FOOT, lr.getEps_dielect(), lr.getSgm_conductivity(), lr.getEno_ns_surfref(), lr.getFrq_mhz(), lr.getRadio_climate(), lr.getPol(), lr.getConf(), lr.getRel());
                 }
                 
@@ -849,7 +849,7 @@ public class SplatEngine {
                 lon -= 360.0;
             }
 
-            edge = new Site("", "", maxNorth, lon, altitude);
+            edge = new Site("", "", maxNorth, lon, (float)altitude);
             //edge.lat = max_north;
             //edge.lon = lon;
             //edge.alt = getAltitude();
@@ -879,7 +879,7 @@ public class SplatEngine {
 //            edge.lon = min_west;
 //            edge.alt = getAltitude();
 
-            edge = new Site("", "", lat, minWest, altitude);
+            edge = new Site("", "", lat, minWest, (float)altitude);
 
             PlotPath(source, edge, mask_value);
             count++;
@@ -905,7 +905,7 @@ public class SplatEngine {
             if (lon >= 360.0) {
                 lon -= 360.0;
             }
-            edge = new Site("", "", minNorth, lon, altitude);
+            edge = new Site("", "", minNorth, lon, (float)altitude);
 //            edge.lat = min_north;
 //            edge.lon = lon;
 //            edge.alt = getAltitude();
@@ -935,7 +935,7 @@ public class SplatEngine {
 //            edge.lon = max_west;
 //            edge.alt = getAltitude();
 
-            edge = new Site("", "", lat, maxWest, altitude);
+            edge = new Site("", "", lat, maxWest, (float)altitude);
 
             PlotPath(source, edge, mask_value);
             count++;
@@ -1037,7 +1037,7 @@ public class SplatEngine {
                         lon -= 360.0;
                     }
 
-                    edge = new Site("", "", maxNorth, lon, altitude);
+                    edge = new Site("", "", maxNorth, lon, (float)altitude);
 //            edge.lat = max_north;
 //            edge.lon = lon;
 //            edge.alt = getAltitude();
@@ -1061,7 +1061,7 @@ public class SplatEngine {
                 z = (int) (th * (double) (maxNorth - minNorth));
                 for (lat = maxnorth, x = 0, y = 0; lat >= (double) minNorth; y++, lat = maxnorth - (dpp * (double) y)) {
 
-                    edge = new Site("", "", lat, minWest, altitude);
+                    edge = new Site("", "", lat, minWest, (float)altitude);
 //            edge.lat = lat;
 //            edge.lon = min_west;
 //            edge.alt = getAltitude();
@@ -1087,7 +1087,7 @@ public class SplatEngine {
                     if (lon >= 360.0) {
                         lon -= 360.0;
                     }
-                    edge = new Site("", "", minNorth, lon, altitude);
+                    edge = new Site("", "", minNorth, lon, (float)altitude);
 //            edge.lat = min_north;
 //            edge.lon = lon;  
 //            edge.alt = getAltitude();
@@ -1111,7 +1111,7 @@ public class SplatEngine {
                 z = (int) (th * (double) (maxNorth - minNorth));
                 for (lat = (double) minNorth, x = 0, y = 0; lat < (double) maxNorth; y++, lat = (double) minNorth + (dpp * (double) y)) {
 
-                    edge = new Site("", "", lat, maxWest, altitude);
+                    edge = new Site("", "", lat, maxWest, (float)altitude);
 
                     PlotLRPath(source, edge, mask_value, wri);
                     count++;
@@ -1451,34 +1451,7 @@ public class SplatEngine {
         this.contourThreshold = contourThreshold;
     }
 
-    /**
-     * @return the gotElevationPattern
-     */
-    public int getGotElevationPattern() {
-        return gotElevationPattern;
-    }
-
-    /**
-     * @param gotElevationPattern the gotElevationPattern to set
-     */
-    public void setGotElevationPattern(int gotElevationPattern) {
-        this.gotElevationPattern = gotElevationPattern;
-    }
-
-    /**
-     * @return the gotAzimuthPattern
-     */
-    public int getGotAzimuthPattern() {
-        return gotAzimuthPattern;
-    }
-
-    /**
-     * @param gotAzimuthPattern the gotAzimuthPattern to set
-     */
-    public void setGotAzimuthPattern(int gotAzimuthPattern) {
-        this.gotAzimuthPattern = gotAzimuthPattern;
-    }
-
+   
     /**
      * @return the metric
      */

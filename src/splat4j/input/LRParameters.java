@@ -62,17 +62,18 @@ public class LRParameters {
                 try {
                     lr = new LR();
                     Scanner scanner = new Scanner(lrFile);
-                   lr.setEps_dielect(Double.parseDouble(scanner.nextLine().split(";")[0].trim()));
+                    lr.setEps_dielect(Double.parseDouble(scanner.nextLine().split(";")[0].trim()));
                     lr.setSgm_conductivity(Double.parseDouble(scanner.nextLine().split(";")[0].trim()));
                     lr.setEno_ns_surfref(Double.parseDouble(scanner.nextLine().split(";")[0].trim()));
-                    lr.setFrq_mhz(this.frq_mhz = Double.parseDouble(scanner.nextLine().split(";")[0].trim()));
+                    this.frq_mhz = Double.parseDouble(scanner.nextLine().split(";")[0].trim());
+                    lr.setFrq_mhz(splat.getForcedFreq() < 0 ? this.frq_mhz:splat.getForcedFreq());
                     lr.setRadio_climate(this.radio_climate = Integer.parseInt(scanner.nextLine().split(";")[0].trim()));
                     lr.setPol(Integer.parseInt(scanner.nextLine().split(";")[0].trim()));
                     lr.setConf(Double.parseDouble(scanner.nextLine().split(";")[0].trim()));
                     lr.setRel(Double.parseDouble(scanner.nextLine().split(";")[0].trim()));
 
                     String power = scanner.nextLine().split(";")[0].trim();
-                   lr.setErp(Double.parseDouble(power.replaceAll("dBm|dbm", "")));
+                    lr.setErp(Double.parseDouble(power.replaceAll("dBm|dbm", "")));
                     if (power.toLowerCase().contains("dbm")) {
                         lr.setErp((Math.pow(10.0, (lr.getErp() - 32.14) / 10.0)));
                     }
@@ -84,29 +85,29 @@ public class LRParameters {
 //
 //		if (forced_freq>=20.0 && forced_freq<=20000.0)
 //			LR.frq_mhz=forced_freq;
-                   // if (ok) {
-                        this.loadAzFile(filename.replace("lrp", "az"));
-                        this.loadElFile(filename.replace("lrp", "el"));
-                   // }
+                    // if (ok) {
+                    this.loadAzFile(filename.replace("lrp", "az"));
+                    this.loadElFile(filename.replace("lrp", "el"));
+                    // }
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(LRParameters.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (NumberFormatException ex) {
                     System.err.println("There was an error loading the specified lrp file. Default values will be used");
-                    
+
                 }
             } else {
-                
-                lr = new LR();
-                     lr.setEps_dielect(this.eps_dielect);
-                    lr.setSgm_conductivity(this.sgm_conductivity);
-                    lr.setEno_ns_surfref(this.eno_ns_surfref);
-                    lr.setFrq_mhz(this.frq_mhz );
-                    lr.setRadio_climate(this.radio_climate);
-                    lr.setPol(this.pol);
-                    lr.setConf(this.conf);
-                    lr.setRel(this.rel);
 
-                    lr.setErp((Math.pow(10.0, (this.erp - 32.14) / 10.0)));
+                lr = new LR();
+                lr.setEps_dielect(this.eps_dielect);
+                lr.setSgm_conductivity(this.sgm_conductivity);
+                lr.setEno_ns_surfref(this.eno_ns_surfref);
+                lr.setFrq_mhz(splat.getForcedFreq() < 0 ? this.frq_mhz : splat.getForcedFreq());
+                lr.setRadio_climate(this.radio_climate);
+                lr.setPol(this.pol);
+                lr.setConf(this.conf);
+                lr.setRel(this.rel);
+
+                lr.setErp(splat.getForcedErp() < 0? Math.pow(10.0, (this.erp - 32.14) / 10.0) : splat.getForcedErp());
                 lrFile = new File("splat.lrp");
 
                 FileWriter fwr = null;
@@ -135,14 +136,13 @@ public class LRParameters {
                     } catch (IOException ex) {
                         Logger.getLogger(LRParameters.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    
+
                 }
 
             }
             this.splat.setLr(lr);
         }
     }
-    
 
     void loadAzFile(String filename) {
         /* This function reads and processes antenna pattern (.az
@@ -176,7 +176,6 @@ public class LRParameters {
                     String azAmp = scanner.nextLine().split(";")[0];
                     az = Double.parseDouble(azAmp.split(" ")[0]);
                     amplitude = Double.parseDouble(azAmp.split(" ")[1]);
-                }
 
 //		fgets(string,254,fd);
 //		pointer=strchr(string,';');
@@ -188,12 +187,12 @@ public class LRParameters {
 //
 //		do
 //		{
-                x = (int) Math.rint(az);
+                    x = (int) Math.rint(az);
 
-                if (x >= 0 && x <= 360) {
-                    azimuth[x] += amplitude;
-                    readCount[x]++;
-                }
+                    if (x >= 0 && x <= 360) {
+                        azimuth[x] += amplitude;
+                        readCount[x]++;
+                    }
 
 //			fgets(string,254,fd);
 //			pointer=strchr(string,';');
@@ -206,77 +205,79 @@ public class LRParameters {
 //		} while (feof(fd)==0);
 //
 //		fclose(fd);
-/* Handle 0=360 degree ambiguity */
-                if ((readCount[0] == 0) && (readCount[360] != 0)) {
-                    readCount[0] = readCount[360];
-                    azimuth[0] = azimuth[360];
                 }
-
-                if ((readCount[0] != 0) && (readCount[360] == 0)) {
-                    readCount[360] = readCount[0];
-                    azimuth[360] = azimuth[0];
-                }
-
-                /* Average pattern values in case more than
-one was read for each degree of azimuth. */
-                for (x = 0; x <= 360; x++) {
-                    if (readCount[x] > 1) {
-                        azimuth[x] /= (float) readCount[x];
-                    }
-                }
-
-                /* Interpolate missing azimuths
-to completely fill the array */
-                last_index = -1;
-                next_index = -1;
-
-                for (x = 0; x <= 360; x++) {
-                    if (readCount[x] != 0) {
-                        if (last_index == -1) {
-                            last_index = x;
-                        } else {
-                            next_index = x;
-                        }
-                    }
-
-                    if (last_index != -1 && next_index != -1) {
-                        valid1 = azimuth[last_index];
-                        valid2 = azimuth[next_index];
-
-                        span = next_index - last_index;
-                        delta = (valid2 - valid1) / (float) span;
-
-                        for (y = last_index + 1; y < next_index; y++) {
-                            azimuth[y] = azimuth[y - 1] + delta;
-                        }
-
-                        last_index = y;
-                        next_index = -1;
-                    }
-                }
-
-                /* Perform azimuth pattern rotation
-and load azimuth_pattern[361] with
-azimuth pattern data in its final form. */
-                for (x = 0; x < 360; x++) {
-                    y = x + (int) Math.rint(rotation);
-
-                    if (y >= 360) {
-                        y -= 360;
-                    }
-
-                    azimuthPattern[y] = azimuth[x];
-                }
-
-                azimuthPattern[360] = azimuthPattern[0];
-
-                got_azimuth_pattern = 255;
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(LRParameters.class.getName()).log(Level.SEVERE, null, ex);
             }
+            /* Handle 0=360 degree ambiguity */
+            if ((readCount[0] == 0) && (readCount[360] != 0)) {
+                readCount[0] = readCount[360];
+                azimuth[0] = azimuth[360];
+            }
+
+            if ((readCount[0] != 0) && (readCount[360] == 0)) {
+                readCount[360] = readCount[0];
+                azimuth[360] = azimuth[0];
+            }
+
+            /* Average pattern values in case more than
+one was read for each degree of azimuth. */
+            for (x = 0; x <= 360; x++) {
+                if (readCount[x] > 1) {
+                    azimuth[x] /= (float) readCount[x];
+                }
+            }
+
+            /* Interpolate missing azimuths
+to completely fill the array */
+            last_index = -1;
+            next_index = -1;
+
+            for (x = 0; x <= 360; x++) {
+                if (readCount[x] != 0) {
+                    if (last_index == -1) {
+                        last_index = x;
+                    } else {
+                        next_index = x;
+                    }
+                }
+
+                if (last_index != -1 && next_index != -1) {
+                    valid1 = azimuth[last_index];
+                    valid2 = azimuth[next_index];
+
+                    span = next_index - last_index;
+                    delta = (valid2 - valid1) / (float) span;
+
+                    for (y = last_index + 1; y < next_index; y++) {
+                        azimuth[y] = azimuth[y - 1] + delta;
+                    }
+
+                    last_index = y;
+                    next_index = -1;
+                }
+            }
+
+            /* Perform azimuth pattern rotation
+and load azimuth_pattern[361] with
+azimuth pattern data in its final form. */
+            for (x = 0; x < 360; x++) {
+                y = x + (int) Math.rint(rotation);
+
+                if (y >= 360) {
+                    y -= 360;
+                }
+
+                azimuthPattern[y] = azimuth[x];
+            }
+
+            azimuthPattern[360] = azimuthPattern[0];
+
+            lr.setGot_azimuth_pattern(true); 
+                    got_azimuth_pattern = 255;
+
         }
     }
-    
 
     void loadElFile(String filename) {
 
@@ -334,7 +335,7 @@ normalized field radiation pattern amplitude
 
                     if (x >= 0 && x <= 10000) {
                         el_pattern[x] += amplitude;
-                        readCount[x]++;
+                        readCount[x] = readCount[x] + 1;
                     }
 //
 //                fgets(string, 254, fd);
@@ -348,136 +349,136 @@ normalized field radiation pattern amplitude
 //            }
 //
 //            fclose(fd);
-
-                    /* Average the field values in case more than
-one was read for each 0.01 degrees of elevation. */
-                    for (x = 0; x <= 10000; x++) {
-                        if (readCount[x] > 1) {
-                            el_pattern[x] /= (float) readCount[x];
-                        }
-                    }
-
-                    /* Interpolate between missing elevations (if
-any) to completely fill the array and provide
-radiated field values for every 0.01 degrees of
-elevation. */
-                    last_index = -1;
-                    next_index = -1;
-
-                    for (x = 0; x <= 10000; x++) {
-                        if (readCount[x] != 0) {
-                            if (last_index == -1) {
-                                last_index = x;
-                            } else {
-                                next_index = x;
-                            }
-                        }
-
-                        if (last_index != -1 && next_index != -1) {
-                            valid1 = el_pattern[last_index];
-                            valid2 = el_pattern[next_index];
-
-                            span = next_index - last_index;
-                            delta = (valid2 - valid1) / (float) span;
-
-                            for (y = last_index + 1; y < next_index; y++) {
-                                el_pattern[y] = el_pattern[y - 1] + delta;
-                            }
-
-                            last_index = y;
-                            next_index = -1;
-                        }
-                    }
-
-                    /* Fill slant_angle[] array with offset angles based
-on the antenna's mechanical beam tilt (if any)
-and tilt direction (azimuth). */
-                    if (mechanical_tilt == 0.0) {
-                        for (x = 0; x <= 360; x++) {
-                            slant_angle[x] = 0.0;
-                        }
-                    } else {
-                        tilt_increment = mechanical_tilt / 90.0;
-
-                        for (x = 0; x <= 360; x++) {
-                            xx = (float) x;
-                            y = (int) Math.rint(tilt_azimuth + xx);
-
-                            while (y >= 360) {
-                                y -= 360;
-                            }
-
-                            while (y < 0) {
-                                y += 360;
-                            }
-
-                            if (x <= 180) {
-                                slant_angle[y] = -(tilt_increment * (90.0 - xx));
-                            }
-
-                            if (x > 180) {
-                                slant_angle[y] = -(tilt_increment * (xx - 270.0));
-                            }
-                        }
-                    }
-
-                    slant_angle[360] = slant_angle[0];
-                    /* 360 degree wrap-around */
-
-                    for (w = 0; w <= 360; w++) {
-                        tilt = slant_angle[w];
-
-                        /**
-                         * Convert tilt angle to an array index offset *
-                         */
-                        y = (int) Math.rint(100.0 * tilt);
-
-                        /* Copy shifted el_pattern[10001] field
-    values into elevation_pattern[361][1001]
-    at the corresponding azimuth, downsampling
-    (averaging) along the way in chunks of 10. */
-                        for (x = y, z = 0; z <= 1000; x += 10, z++) {
-                            for (sum = 0.0, a = 0; a < 10; a++) {
-                                b = a + x;
-
-                                if (b >= 0 && b <= 10000) {
-                                    sum += el_pattern[b];
-                                }
-                                if (b < 0) {
-                                    sum += el_pattern[0];
-                                }
-                                if (b > 10000) {
-                                    sum += el_pattern[10000];
-                                }
-                            }
-
-                            elevation_pattern[w][z] = sum / 10.0;
-                        }
-                    }
-
-                    got_elevation_pattern = 255;
-                }
-
-                for (x = 0; x <= 360; x++) {
-                    for (y = 0; y <= 1000; y++) {
-                        if (got_elevation_pattern == 255) {
-                            elevation = elevation_pattern[x][y];
-                        } else {
-                            elevation = 1.0;
-                        }
-
-                        if (got_azimuth_pattern == 255) {
-                            az = azimuthPattern[x];
-                        } else {
-                            az = 1.0;
-                        }
-
-                        antenna_pattern[x][y] = az * elevation;
-                    }
                 }
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(LRParameters.class.getName()).log(Level.SEVERE, null, ex);
             }
+            /* Average the field values in case more than
+one was read for each 0.01 degrees of elevation. */
+            for (x = 0; x <= 10000; x++) {
+                if (readCount[x] > 1) {
+                    el_pattern[x] = el_pattern[x] / (float) readCount[x];
+                }
+            }
+
+            /* Interpolate between missing elevations (if
+any) to completely fill the array and provide
+radiated field values for every 0.01 degrees of
+elevation. */
+            last_index = -1;
+            next_index = -1;
+
+            for (x = 0; x <= 10000; x++) {
+                if (readCount[x] != 0) {
+                    if (last_index == -1) {
+                        last_index = x;
+                    } else {
+                        next_index = x;
+                    }
+                }
+
+                if (last_index != -1 && next_index != -1) {
+                    valid1 = el_pattern[last_index];
+                    valid2 = el_pattern[next_index];
+
+                    span = next_index - last_index;
+                    delta = (valid2 - valid1) / (float) span;
+
+                    for (y = last_index + 1; y < next_index; y++) {
+                        el_pattern[y] = el_pattern[y - 1] + delta;
+                    }
+
+                    last_index = y;
+                    next_index = -1;
+                }
+            }
+
+            /* Fill slant_angle[] array with offset angles based
+on the antenna's mechanical beam tilt (if any)
+and tilt direction (azimuth). */
+            if (mechanical_tilt == 0.0) {
+                for (x = 0; x <= 360; x++) {
+                    slant_angle[x] = 0.0;
+                }
+            } else {
+                tilt_increment = mechanical_tilt / 90.0;
+
+                for (x = 0; x <= 360; x++) {
+                    xx = (float) x;
+                    y = (int) Math.rint(tilt_azimuth + xx);
+
+                    while (y >= 360) {
+                        y -= 360;
+                    }
+
+                    while (y < 0) {
+                        y += 360;
+                    }
+
+                    if (x <= 180) {
+                        slant_angle[y] = -(tilt_increment * (90.0 - xx));
+                    }
+
+                    if (x > 180) {
+                        slant_angle[y] = -(tilt_increment * (xx - 270.0));
+                    }
+                }
+            }
+
+            slant_angle[360] = slant_angle[0];
+            /* 360 degree wrap-around */
+
+            for (w = 0; w <= 360; w++) {
+                tilt = slant_angle[w];
+
+                /**
+                 * Convert tilt angle to an array index offset *
+                 */
+                y = (int) Math.rint(100.0 * tilt);
+
+                /* Copy shifted el_pattern[10001] field
+    values into elevation_pattern[361][1001]
+    at the corresponding azimuth, downsampling
+    (averaging) along the way in chunks of 10. */
+                for (x = y, z = 0; z <= 1000; x += 10, z++) {
+                    for (sum = 0.0, a = 0; a < 10; a++) {
+                        b = a + x;
+
+                        if (b >= 0 && b <= 10000) {
+                            sum += el_pattern[b];
+                        }
+                        if (b < 0) {
+                            sum += el_pattern[0];
+                        }
+                        if (b > 10000) {
+                            sum += el_pattern[10000];
+                        }
+                    }
+
+                    elevation_pattern[w][z] = sum / 10.0;
+                }
+            }
+lr.setGot_elevation_pattern(true);
+            got_elevation_pattern = 255;
         }
+
+        for (x = 0; x <= 360; x++) {
+            for (y = 0; y <= 1000; y++) {
+                if (got_elevation_pattern == 255) {
+                    elevation = elevation_pattern[x][y];
+                } else {
+                    elevation = 1.0;
+                }
+
+                if (got_azimuth_pattern == 255) {
+                    az = azimuthPattern[x];
+                } else {
+                    az = 1.0;
+                }
+
+                lr.setAntenna_pattern(x, y, (float)(az * elevation));
+            }
+        }
+
     }
 }

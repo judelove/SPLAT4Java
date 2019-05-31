@@ -30,7 +30,7 @@ public class PPMGenerator {
     Configuration config;
     SplatEngine splat;
     double conversion, one_over_gamma, lat, lon,
-            north, south, east, west, max_elevation, min_elevation;
+            north, south, east, west;
     boolean found, kml, geo, ngs, cityorcounty;
     double width, height, terrain;
     int loss, signal, match, mask, indx, x, y, z, x0 = 0, y0 = 0, red = 0, green = 0, blue = 0, hundreds, tens, units;
@@ -320,7 +320,7 @@ public class PPMGenerator {
                                         mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
                                         //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                     } else {
-                                        terrain = (int) (0.5 + Math.pow((double) (dem[indx].getData()[x0][y0] - min_elevation), one_over_gamma) * conversion);
+                                        terrain = (int) (0.5 + Math.pow((double) (dem[indx].getData()[x0][y0] - splat.getMinElevation()), one_over_gamma) * conversion);
                                         mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
                                         // mpWri.write(String.format("%s%s%s", terrain, terrain, terrain));
                                     }
@@ -337,7 +337,7 @@ public class PPMGenerator {
                                         //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                     } else {
                                         /* Elevation: Greyscale */
-                                        terrain = (int) (0.5 + Math.pow((double) (dem[indx].getData()[x0][y0] - min_elevation), one_over_gamma) * conversion);
+                                        terrain = (int) (0.5 + Math.pow((double) (dem[indx].getData()[x0][y0] - splat.getMinElevation()), one_over_gamma) * conversion);
                                         mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
                                         //mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
                                     }
@@ -1159,7 +1159,7 @@ public class PPMGenerator {
                                         mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
                                         //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                     } else {
-                                        terrain = (0.5 + Math.pow((double) (dem[indx].getData(x0, y0) - min_elevation), one_over_gamma) * conversion);
+                                        terrain = (0.5 + Math.pow((double) (dem[indx].getData(x0, y0) -  splat.getMinElevation()), one_over_gamma) * conversion);
                                         mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
                                         //mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
                                     }
@@ -1180,7 +1180,7 @@ public class PPMGenerator {
                                             //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                         } else {
                                             /* Elevation: Greyscale */
-                                            terrain = (0.5 + Math.pow((double) (dem[indx].getData(x0, y0) - min_elevation), one_over_gamma) * conversion);
+                                            terrain = (0.5 + Math.pow((double) (dem[indx].getData(x0, y0) - splat.getMinElevation()), one_over_gamma) * conversion);
                                             mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
                                             //mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
                                         }
@@ -1433,7 +1433,7 @@ public class PPMGenerator {
         }
     }
 
-    public void WritePPMDBM(String baseFilename, boolean geo, boolean kml, boolean ngs, Site[] xmtr, Dem[] dem) {
+    public void WritePPMDBM(String baseFilename, boolean geo, boolean kml, boolean ngs, Site[] xmtr) {
         Region region = new Region();
 
         loadDBMColors(xmtr[0], region);
@@ -1460,8 +1460,8 @@ public class PPMGenerator {
                     }
 
                     for (indx = 0, found = false; indx < config.MAXPAGES && !found;) {
-                        x0 = (int) Math.rint(splat.getPpd() * (lat - (double) dem[indx].getMinNorth()));
-                        y0 = splat.getMpi() - (int) Math.rint(splat.getPpd() * (Utils.lonDiff((double) dem[indx].getMaxWest(), lon)));
+                        x0 = (int) Math.rint(splat.getPpd() * (lat - (double)splat.getDem()[indx].getMinNorth()));
+                        y0 = splat.getMpi() - (int) Math.rint(splat.getPpd() * (Utils.lonDiff((double) splat.getDem()[indx].getMaxWest(), lon)));
 
                         if (x0 >= 0 && x0 <= splat.getMpi() && y0 >= 0 && y0 <= splat.getMpi()) {
                             found = true;
@@ -1471,8 +1471,8 @@ public class PPMGenerator {
                     }
 
                     if (found) {
-                        mask = dem[indx].getMask()[x0][y0];
-                        int dBm = (dem[indx].getSignal()[x0][y0]) - 200;
+                        mask = splat.getDem()[indx].getMask()[x0][y0];
+                        int dBm = (splat.getDem()[indx].getSignal()[x0][y0]) - 200;
                         cityorcounty = false;
 
                         match = 255;
@@ -1532,11 +1532,11 @@ public class PPMGenerator {
                                 } else {
                                     /* Display land or sea elevation */
 
-                                    if (dem[indx].getData(x0, y0) == 0) {
+                                    if (splat.getDem()[indx].getData(x0, y0) == 0) {
                                         mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
                                         //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                     } else {
-                                        terrain = (0.5 + Math.pow((double) (dem[indx].getData(x0, y0) - min_elevation), one_over_gamma) * conversion);
+                                        terrain = (0.5 + Math.pow((double) (splat.getDem()[indx].getData(x0, y0) - splat.getMinElevation()), one_over_gamma) * conversion);
                                         mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
                                         //mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
                                     }
@@ -1552,12 +1552,12 @@ public class PPMGenerator {
                                         mpWri.write(new byte[]{(byte) 255, (byte) 255, (byte) 255});
                                         //mpWri.write(String.format("%c%c%c", 255, 255, 255));
                                     } else {
-                                        if (dem[indx].getData(x0, y0) == 0) {
+                                        if (splat.getDem()[indx].getData(x0, y0) == 0) {
                                             mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
                                             //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                         } else {
                                             /* Elevation: Greyscale */
-                                            terrain = (0.5 + Math.pow((double) (dem[indx].getData(x0, y0) - min_elevation), one_over_gamma) * conversion);
+                                            terrain = (0.5 + Math.pow((double) (splat.getDem()[indx].getData(x0, y0) - splat.getMinElevation()), one_over_gamma) * conversion);
                                             mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
                                             // mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
                                         }
@@ -1608,114 +1608,114 @@ public class PPMGenerator {
                                         if ((FontData.get(16 * ('-') + (y0 - 8)) & (128 >> (x - 5))) > 0) {
                                             indx = 255;
                                         }
-                                    } else {
-                                        if (x >= 5 && x <= 12) {
-                                            if ((FontData.get(16 * ('+') + (y0 - 8)
-                                            ) & (128 >> (x - 5))) > 0) {
-                                                indx = 255;
-                                            }
+                                    }
+                                } else {
+                                    if (x >= 5 && x <= 12) {
+                                        if ((FontData.get(16 * ('+') + (y0 - 8)
+                                        ) & (128 >> (x - 5))) > 0) {
+                                            indx = 255;
                                         }
+                                    }
+                                }
 
+                                if (x >= 13 && x <= 20) {
+                                    if ((FontData.get(16 * (hundreds + '0') + (y0 - 8)
+                                    ) & (128 >> (x - 13))) > 0) {
+                                        indx = 255;
+                                    }
+                                }
+                            }
+
+                            if (tens > 0 || hundreds > 0) {
+                                if (hundreds == 0) {
+                                    if (region.getLevel()[indx] < 0) {
                                         if (x >= 13 && x <= 20) {
-                                            if ((FontData.get(16 * (hundreds + '0') + (y0 - 8)
+                                            if ((FontData.get(16 * ('-') + (y0 - 8)
                                             ) & (128 >> (x - 13))) > 0) {
                                                 indx = 255;
                                             }
                                         }
-
-                                        if (tens > 0 || hundreds > 0) {
-                                            if (hundreds == 0) {
-                                                if (region.getLevel()[indx] < 0) {
-                                                    if (x >= 13 && x <= 20) {
-                                                        if ((FontData.get(16 * ('-') + (y0 - 8)
-                                                        ) & (128 >> (x - 13))) > 0) {
-                                                            indx = 255;
-                                                        }
-                                                    } else {
-                                                        if (x >= 13 && x <= 20) {
-                                                            if ((FontData.get(16 * ('+') + (y0 - 8)
-                                                            ) & (128 >> (x - 13))) > 0) {
-                                                                indx = 255;
-                                                            }
-                                                        }
-                                                    }
-
-                                                    if (x >= 21 && x <= 28) {
-                                                        if ((FontData.get(16 * (tens + '0') + (y0 - 8)
-                                                        ) & (128 >> (x - 21))) > 0) {
-                                                            indx = 255;
-                                                        }
-                                                    }
-
-                                                    if (hundreds == 0 && tens == 0) {
-                                                        if (region.getLevel()[indx] < 0) {
-                                                            if (x >= 21 && x <= 28) {
-                                                                if ((FontData.get(16 * ('-') + (y0 - 8)
-                                                                ) & (128 >> (x - 21))) > 0) {
-                                                                    indx = 255;
-                                                                }
-                                                            } else {
-                                                                if (x >= 21 && x <= 28) {
-                                                                    if ((FontData.get(16 * ('+') + (y0 - 8)
-                                                                    ) & (128 >> (x - 21))) > 0) {
-                                                                        indx = 255;
-                                                                    }
-                                                                }
-                                                            }
-
-                                                            if (x >= 29 && x <= 36) {
-                                                                if ((FontData.get(16 * (units + '0') + (y0 - 8)
-                                                                ) & (128 >> (x - 29))) > 0) {
-                                                                    indx = 255;
-                                                                }
-
-                                                                if (x >= 37 && x <= 44) {
-                                                                    if ((FontData.get(16 * ('d') + (y0 - 8)
-                                                                    ) & (128 >> (x - 37))) > 0) {
-                                                                        indx = 255;
-                                                                    }
-
-                                                                    if (x >= 45 && x <= 52) {
-                                                                        if ((FontData.get(16 * ('B') + (y0 - 8)
-                                                                        ) & (128 >> (x - 45))) > 0) {
-                                                                            indx = 255;
-                                                                        }
-
-                                                                        if (x >= 53 && x <= 60) {
-                                                                            if ((FontData.get(16 * ('m') + (y0 - 8)
-                                                                            ) & (128 >> (x - 53))) > 0) {
-                                                                                indx = 255;
-                                                                            }
-                                                                        }
-
-                                                                        if (indx > region.getLevels()) {
-                                                                            mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
-                                                                            //mpWri.write(String.format("%c%c%c", 0, 0, 0));
-                                                                        } else {
-                                                                            red = region.getColor()[indx][0];
-                                                                            green = region.getColor()[indx][1];
-                                                                            blue = region.getColor()[indx][2];
-                                                                            mpWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
-                                                                            //mpWri.write(String.format("%c%c%c", red, green, blue));
-                                                                        }
-                                                                    }
-                                                                }
-
-                                                            }
-                                                        }
-                                                    }
-                                                }
+                                    } else {
+                                        if (x >= 13 && x <= 20) {
+                                            if ((FontData.get(16 * ('+') + (y0 - 8)
+                                            ) & (128 >> (x - 13))) > 0) {
+                                                indx = 255;
                                             }
                                         }
                                     }
                                 }
+
+                                if (x >= 21 && x <= 28) {
+                                    if ((FontData.get(16 * (tens + '0') + (y0 - 8)
+                                    ) & (128 >> (x - 21))) > 0) {
+                                        indx = 255;
+                                    }
+                                }
+
                             }
+
+                            if (hundreds == 0 && tens == 0) {
+                                if (region.getLevel()[indx] < 0) {
+                                    if (x >= 21 && x <= 28) {
+                                        if ((FontData.get(16 * ('-') + (y0 - 8)
+                                        ) & (128 >> (x - 21))) > 0) {
+                                            indx = 255;
+                                        }
+                                    }
+                                } else {
+                                    if (x >= 21 && x <= 28) {
+                                        if ((FontData.get(16 * ('+') + (y0 - 8)
+                                        ) & (128 >> (x - 21))) > 0) {
+                                            indx = 255;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (x >= 29 && x <= 36) {
+                                if ((FontData.get(16 * (units + '0') + (y0 - 8)
+                                ) & (128 >> (x - 29))) > 0) {
+                                    indx = 255;
+                                }
+                            }
+
+                            if (x >= 37 && x <= 44) {
+                                if ((FontData.get(16 * ('d') + (y0 - 8)
+                                ) & (128 >> (x - 37))) > 0) {
+                                    indx = 255;
+                                }
+                            }
+
+                            if (x >= 45 && x <= 52) {
+                                if ((FontData.get(16 * ('B') + (y0 - 8)
+                                ) & (128 >> (x - 45))) > 0) {
+                                    indx = 255;
+                                }
+                            }
+
+                            if (x >= 53 && x <= 60) {
+                                if ((FontData.get(16 * ('m') + (y0 - 8)
+                                ) & (128 >> (x - 53))) > 0) {
+                                    indx = 255;
+                                }
+                            }
+                        }
+                        if (indx > region.getLevels()) {
+                            mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
+                            //mpWri.write(String.format("%c%c%c", 0, 0, 0));
+                        } else {
+                            red = region.getColor()[indx][0];
+                            green = region.getColor()[indx][1];
+                            blue = region.getColor()[indx][2];
+                            mpWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
+                            //mpWri.write(String.format("%c%c%c", red, green, blue));
                         }
                     }
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(PPMGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PPMGenerator.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
         if (kml) {
@@ -1757,109 +1757,109 @@ public class PPMGenerator {
                                         ) & (128 >> (x - 5))) > 0) {
                                             indx = 255;
                                         }
-                                    } else {
-                                        if (x >= 5 && x <= 12) {
-                                            if ((FontData.get(16 * ('+') + ((y0 % 30) - 8)
-                                            ) & (128 >> (x - 5))) > 0) {
-                                                indx = 255;
-                                            }
+                                    }
+                                } else {
+                                    if (x >= 5 && x <= 12) {
+                                        if ((FontData.get(16 * ('+') + ((y0 % 30) - 8)
+                                        ) & (128 >> (x - 5))) > 0) {
+                                            indx = 255;
                                         }
+                                    }
+                                }
 
+                                if (x >= 13 && x <= 20) {
+                                    if ((FontData.get(16 * (hundreds + '0') + ((y0 % 30) - 8)
+                                    ) & (128 >> (x - 13))) > 0) {
+                                        indx = 255;
+                                    }
+                                }
+                            }
+
+                            if (tens > 0 || hundreds > 0) {
+                                if (hundreds == 0) {
+                                    if (region.getLevel()[indx] < 0) {
                                         if (x >= 13 && x <= 20) {
-                                            if ((FontData.get(16 * (hundreds + '0') + ((y0 % 30) - 8)
+                                            if ((FontData.get(16 * ('-') + ((y0 % 30) - 8)
                                             ) & (128 >> (x - 13))) > 0) {
                                                 indx = 255;
                                             }
                                         }
-
-                                        if (tens > 0 || hundreds > 0) {
-                                            if (hundreds == 0) {
-                                                if (region.getLevel()[indx] < 0) {
-                                                    if (x >= 13 && x <= 20) {
-                                                        if ((FontData.get(16 * ('-') + ((y0 % 30) - 8)
-                                                        ) & (128 >> (x - 13))) > 0) {
-                                                            indx = 255;
-                                                        }
-                                                    } else {
-                                                        if (x >= 13 && x <= 20) {
-                                                            if ((FontData.get(16 * ('+') + ((y0 % 30) - 8)
-                                                            ) & (128 >> (x - 13))) > 0) {
-                                                                indx = 255;
-                                                            }
-                                                        }
-                                                    }
-
-                                                    if (x >= 21 && x <= 28) {
-                                                        if ((FontData.get(16 * (tens + '0') + ((y0 % 30) - 8)
-                                                        ) & (128 >> (x - 21))) > 0) {
-                                                            indx = 255;
-                                                        }
-                                                    }
-
-                                                    if (hundreds == 0 && tens == 0) {
-                                                        if (region.getLevel()[indx] < 0) {
-                                                            if (x >= 21 && x <= 28) {
-                                                                if ((FontData.get(16 * ('-') + ((y0 % 30) - 8)) & (128 >> (x - 21))) > 0) {
-                                                                    indx = 255;
-                                                                }
-                                                            }
-                                                        } else {
-                                                            if (x >= 21 && x <= 28) {
-                                                                if ((FontData.get(16 * ('+') + ((y0 % 30) - 8)) & (128 >> (x - 21))) > 0) {
-                                                                    indx = 255;
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-
-                                                    if (x >= 29 && x <= 36) {
-                                                        if ((FontData.get(16 * (units + '0') + ((y0 % 30) - 8)) & (128 >> (x - 29))) > 0) {
-                                                            indx = 255;
-                                                        }
-                                                    }
-
-                                                    if (x >= 37 && x <= 44) {
-                                                        if ((FontData.get(16 * ('d') + ((y0 % 30) - 8)) & (128 >> (x - 37))) > 0) {
-                                                            indx = 255;
-                                                        }
-                                                    }
-
-                                                    if (x >= 45 && x <= 52) {
-                                                        if ((FontData.get(16 * ('B') + ((y0 % 30) - 8)) & (128 >> (x - 45))) > 0) {
-                                                            indx = 255;
-                                                        }
-                                                    }
-
-                                                    if (x >= 53 && x <= 60) {
-                                                        if ((FontData.get(16 * ('m') + ((y0 % 30) - 8)) & (128 >> (x - 53))) > 0) {
-                                                            indx = 255;
-                                                        }
-                                                    }
-                                                }
-
-                                                if (indx > region.getLevels()) {
-                                                    ckWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
-                                                    //ckWri.write(String.format("%c%c%c", 0, 0, 0));
-                                                } else {
-                                                    red = region.getColor()[indx][0];
-                                                    green = region.getColor()[indx][1];
-                                                    blue = region.getColor()[indx][2];
-                                                    ckWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
-                                                    //ckWri.write(String.format("%c%c%c", red, green, blue));
-                                                }
+                                    } else {
+                                        if (x >= 13 && x <= 20) {
+                                            if ((FontData.get(16 * ('+') + ((y0 % 30) - 8)
+                                            ) & (128 >> (x - 13))) > 0) {
+                                                indx = 255;
                                             }
                                         }
-
                                     }
 
-                                    System.out.print("Done!\n");
+                                    if (x >= 21 && x <= 28) {
+                                        if ((FontData.get(16 * (tens + '0') + ((y0 % 30) - 8)
+                                        ) & (128 >> (x - 21))) > 0) {
+                                            indx = 255;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (hundreds == 0 && tens == 0) {
+                                if (region.getLevel()[indx] < 0) {
+                                    if (x >= 21 && x <= 28) {
+                                        if ((FontData.get(16 * ('-') + ((y0 % 30) - 8)) & (128 >> (x - 21))) > 0) {
+                                            indx = 255;
+                                        }
+                                    }
+                                } else {
+                                    if (x >= 21 && x <= 28) {
+                                        if ((FontData.get(16 * ('+') + ((y0 % 30) - 8)) & (128 >> (x - 21))) > 0) {
+                                            indx = 255;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (x >= 29 && x <= 36) {
+                                if ((FontData.get(16 * (units + '0') + ((y0 % 30) - 8)) & (128 >> (x - 29))) > 0) {
+                                    indx = 255;
+                                }
+                            }
+
+                            if (x >= 37 && x <= 44) {
+                                if ((FontData.get(16 * ('d') + ((y0 % 30) - 8)) & (128 >> (x - 37))) > 0) {
+                                    indx = 255;
+                                }
+                            }
+
+                            if (x >= 45 && x <= 52) {
+                                if ((FontData.get(16 * ('B') + ((y0 % 30) - 8)) & (128 >> (x - 45))) > 0) {
+                                    indx = 255;
+                                }
+                            }
+
+                            if (x >= 53 && x <= 60) {
+                                if ((FontData.get(16 * ('m') + ((y0 % 30) - 8)) & (128 >> (x - 53))) > 0) {
+                                    indx = 255;
                                 }
                             }
                         }
+
+                        if (indx > region.getLevels()) {
+                            ckWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
+                            //ckWri.write(String.format("%c%c%c", 0, 0, 0));
+                        } else {
+                            red = region.getColor()[indx][0];
+                            green = region.getColor()[indx][1];
+                            blue = region.getColor()[indx][2];
+                            ckWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
+                            //ckWri.write(String.format("%c%c%c", red, green, blue));
+                        }
                     }
                 }
+                System.out.print("Done!\n");
+
             } catch (IOException ex) {
-                Logger.getLogger(PPMGenerator.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(PPMGenerator.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

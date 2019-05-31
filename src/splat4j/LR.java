@@ -20,7 +20,9 @@ public class LR {
 		private int radio_climate;  
 		private int pol;
                 private boolean got_azimuth_pattern = false, got_elevation_pattern = false;
-		private double[][] antenna_pattern = new double[361][1001];
+		private float[][] antenna_pattern = new float[361][1001];
+                private double[][] azimuth_pattern = new double[361][1001];
+                private double[][] elevation_pattern = new double[361][1001];
                 
                 public LR()
                 {}
@@ -91,14 +93,14 @@ public class LR {
     /**
      * @return the antenna_pattern
      */
-    public double[][] getAntenna_pattern() {
+    public float[][] getAntenna_pattern() {
         return antenna_pattern;
     }
 
     /**
      * @param antenna_pattern the antenna_pattern to set
      */
-    public void setAntenna_pattern(int x, int y, double antenna_pattern) {
+    public void setAntenna_pattern(int x, int y, float antenna_pattern) {
         this.antenna_pattern[x][y] = antenna_pattern;
     }
 
@@ -166,13 +168,6 @@ public class LR {
     }
 
     /**
-     * @param antenna_pattern the antenna_pattern to set
-     */
-    public void setAntenna_pattern(double[][] antenna_pattern) {
-        this.antenna_pattern = antenna_pattern;
-    }
-
-    /**
      * @return the got_azimuth_pattern
      */
     public boolean isGot_azimuth_pattern() {
@@ -198,6 +193,21 @@ public class LR {
      */
     public void setGot_elevation_pattern(boolean got_elevation_pattern) {
         this.got_elevation_pattern = got_elevation_pattern;
+    }
+
+    
+    /**
+     * @return the elevation_pattern
+     */
+    public double[][] getElevation_pattern() {
+        return elevation_pattern;
+    }
+
+    /**
+     * @param elevation_pattern the elevation_pattern to set
+     */
+    public void setElevation_pattern(int x, int y, double elevation_pattern) {
+        this.elevation_pattern[x][y] = elevation_pattern;
     }
                 
 }

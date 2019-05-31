@@ -15,7 +15,7 @@ public class Site {
 
     private double lat;
     private double lon;
-    private double alt;
+    private float alt;
     private String name;
     private String filename; 
     
@@ -28,7 +28,7 @@ public class Site {
         this.alt = file.getAlt();
     }
     
-    public Site(String name, String filename, double lat, double lon, double alt)
+    public Site(String name, String filename, double lat, double lon, float alt)
     {
         this.lat = lat;
         this.lon = lon;

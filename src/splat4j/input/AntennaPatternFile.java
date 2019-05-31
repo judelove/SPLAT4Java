@@ -372,7 +372,7 @@ public class AntennaPatternFile {
                     az = 1.0;
                 }
 
-                lr.setAntenna_pattern(x, y, az * elevation);
+                lr.setAntenna_pattern(x, y, (float)(az * elevation));
             }
         }
     }

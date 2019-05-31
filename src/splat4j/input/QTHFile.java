@@ -14,7 +14,8 @@ import java.util.Scanner;
  */
 public class QTHFile {
     
-    private double lat = 91, lon = 361, alt = 0;
+    private double lat = 91, lon = 361;
+    private float alt = 0;
     private String name, filename;
     
     public QTHFile(String path) {
@@ -77,11 +78,11 @@ public class QTHFile {
         return bearing < -360 ? 0 : (bearing > 360) ? 0 : bearing;
     }
     
-    private double getAlt(String nextLine) {
+    private float getAlt(String nextLine) {
         if (nextLine.contains("m") || nextLine.contains("M")) {
-            return Double.parseDouble(nextLine.replace("m", "").replace("M", "").trim()) * 3.28084;
+            return (float)(Float.parseFloat(nextLine.replace("m", "").replace("M", "").trim()) * 3.28084);
         } else {
-            return Double.parseDouble(nextLine.trim());
+            return Float.parseFloat(nextLine.trim());
         }
     }
 
@@ -102,7 +103,7 @@ public class QTHFile {
     /**
      * @return the alt
      */
-    public double getAlt() {
+    public float getAlt() {
         return alt;
     }
 

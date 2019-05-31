@@ -136,8 +136,9 @@ public class SPLAT4J {
         header = String.format("\n\t\t--==[ Welcome To %s v%s ]==--\n\n", splat_name, splat_version);
         System.out.println(String.join(" ", argv));
         processInput(argv);
-        configure();
         metricise(splat.isMetric());
+        configure();
+        
         loadReceiverSite();
         if(!locateSDFFiles())
         {
@@ -738,13 +739,19 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
                         return false;
                     }
                 case "-c":
-                    try {
+                    try{
+                    if(splat.isLRmap())
+                    {
+                        System.err.println("-c and -L are exclusive. ignoring -c option");
+                    }
+                    else
+                    {
                         splat.setAltitude(Double.parseDouble(args[x + 1]));
                         splat.setMap(true);
                         splat.setCoverage(true);
                         splat.setArea_mode(true);
                         max_txsites = 4;
-                    } catch (Exception ex) {
+                    }} catch (Exception ex) {
                         return false;
                     }
                     break;
@@ -838,13 +845,17 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
                     }
                     break;
                 case "-L":
-                    splat.setLRaltitude(Double.parseDouble(args[x + 1]));
+                    
+                    if (splat.isCoverage()) {
+                        System.out.printf("c and L are exclusive options, ignoring L.\n");
+                    }
+                    else
+                    {
+                        splat.setLRaltitude(Double.parseDouble(args[x + 1]));
                     splat.setMap(true);
                     splat.setLRmap(true);
                     splat.setArea_mode(true);
 
-                    if (splat.isCoverage()) {
-                        System.out.printf("c and L are exclusive options, ignoring L.\n");
                     }
                     break;
                 case "-l":
@@ -997,7 +1008,7 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
                 gen.WritePPMLR(mapfile, splat.isGeo(), splat.isKml(), splat.isNgs(), txSites.toArray(new Site[txSites.size()]), splat.getDem());
             } else {
                 if (splat.isDbm()) {
-                    gen.WritePPMDBM(mapfile, splat.isGeo(), splat.isKml(), splat.isNgs(), txSites.toArray(new Site[txSites.size()]), splat.getDem());
+                    gen.WritePPMDBM(mapfile, splat.isGeo(), splat.isKml(), splat.isNgs(), txSites.toArray(new Site[txSites.size()]));
                 } else {
                     gen.WritePPMSS(mapfile, splat.isGeo(), splat.isKml(), splat.isNgs(), txSites.toArray(new Site[txSites.size()]), splat.getDem());
                 }

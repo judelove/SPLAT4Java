@@ -89,7 +89,7 @@ public class ReportGenerator {
 	   acos().  However, note the inverted comparison: if
 	   acos(A) > acos(B), then B > A. */
                 for (x = path.getLength() - 1; x > 0; x--) {
-                    site_x = new Site(null, null, path.getLat(x), path.getLon(x), 0.0);
+                    site_x = new Site(null, null, path.getLat(x), path.getLon(x), 0.0f);
 //                        .getLat()=path.getLat()[x];
 //		site_x.getLon()=path.getLon()[x];
 //		site_x.setAlt.alt=0.0;
