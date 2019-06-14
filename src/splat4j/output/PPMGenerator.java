@@ -5,6 +5,7 @@
  */
 package splat4j.output;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -20,6 +21,7 @@ import splat4j.Dem;
 import splat4j.FontData;
 import splat4j.Region;
 import java.util.Scanner;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -41,6 +43,7 @@ public class PPMGenerator {
     }
 
     public void WritePPM(String baseFilename, boolean geo, boolean kml, boolean ngs, Site[] xmtr) {
+        
 
         configureParameters();
         setGeoBounds();
@@ -50,7 +53,7 @@ public class PPMGenerator {
         if (kml && !geo) {
             writeKMLFile(baseFilename, xmtr, north, south, east, west, x);
         }
-
+BufferedImage img = new BufferedImage((int)width, (int)height,BufferedImage.TYPE_INT_RGB);
         FileOutputStream wri = null;
         try {
             File mapFile = new File(baseFilename + ".ppm");
@@ -86,95 +89,114 @@ public class PPMGenerator {
                                 //wri.write(String.format("%d%d%d", 255, 0, 0));
                             } else if ((mask & 4) > 0) /* County Boundaries: Light Cyan */ {
                                 wri.write(new byte[]{(byte) 128, (byte) 128, (byte) 255});
+                                img.setRGB(x, y, 0xFF000000+(128<<16)+(128<<8)+255);
                             } else {
                                 int k = mask & 57;
                                 switch (mask & 57) {
                                     case 1:
                                         /* TX1: Green */
                                         wri.write(new byte[]{(byte) 0, (byte) 255, (byte) 0});
+                                        img.setRGB(x, y, 0xFF000000+(0<<16)+(255<<8)+0);
                                         break;
 
                                     case 8:
                                         /* TX2: Cyan */
                                         wri.write(new byte[]{(byte) 0, (byte) 255, (byte) 255});
+                                        img.setRGB(x, y, 0xFF000000+(0<<16)+(255<<8)+255);
                                         break;
 
                                     case 9:
                                         /* TX1 + TX2: Yellow */
                                         wri.write(new byte[]{(byte) 255, (byte) 255, (byte) 0});
+                                        img.setRGB(x, y, 0xFF000000+(255<<16)+(255<<8)+0);
                                         break;
 
                                     case 16:
                                         /* TX3: Medium Violet */
                                         wri.write(new byte[]{(byte) 147, (byte) 112, (byte) 219});
+                                        img.setRGB(x, y, 0xFF000000+(147<<16)+(112<<8)+219);
                                         break;
 
                                     case 17:
                                         /* TX1 + TX3: Pink */
                                         wri.write(new byte[]{(byte) 255, (byte) 192, (byte) 203});
+                                        img.setRGB(x, y, 0xFF000000+(255<<16)+(192<<8)+203);
                                         break;
 
                                     case 24:
                                         /* TX2 + TX3: Orange */
                                         wri.write(new byte[]{(byte) 255, (byte) 165, (byte) 0});
+                                        img.setRGB(x, y, 0xFF000000+(255<<16)+(165<<8)+0);
                                         break;
 
                                     case 25:
                                         /* TX1 + TX2 + TX3: Dark Green */
                                         wri.write(new byte[]{(byte) 0, (byte) 100, (byte) 0});
+                                        img.setRGB(x, y, 0xFF000000+(0<<16)+(100<<8)+0);
                                         break;
 
                                     case 32:
                                         /* TX4: Sienna 1 */
                                         wri.write(new byte[]{(byte) 255, (byte) 130, (byte) 71});
+                                        img.setRGB(x, y, 0xFF000000+(255<<16)+(130<<8)+71);
                                         break;
 
                                     case 33:
                                         /* TX1 + TX4: Green Yellow */
                                         wri.write(new byte[]{(byte) 173, (byte) 255, (byte) 47});
+                                        img.setRGB(x, y, 0xFF000000+(173<<16)+(255<<8)+47);
                                         break;
 
                                     case 40:
                                         /* TX2 + TX4: Dark Sea Green 1 */
                                         wri.write(new byte[]{(byte) 193, (byte) 255, (byte) 193});
+                                        img.setRGB(x, y, 0xFF000000+(193<<16)+(255<<8)+193);
                                         break;
 
                                     case 41:
                                         /* TX1 + TX2 + TX4: Blanched Almond */
                                         wri.write(new byte[]{(byte) 255, (byte) 235, (byte) 205});
+                                        img.setRGB(x, y, 0xFF000000+(255<<16)+(235<<8)+205);
                                         break;
 
                                     case 48:
                                         /* TX3 + TX4: Dark Turquoise */
                                         wri.write(new byte[]{(byte) 0, (byte) 206, (byte) 209});
+                                        img.setRGB(x, y, 0xFF000000+(0<<16)+(206<<8)+209);
                                         break;
 
                                     case 49:
                                         /* TX1 + TX3 + TX4: Medium Spring Green */
                                         wri.write(new byte[]{(byte) 0, (byte) 250, (byte) 154});
+                                        img.setRGB(x, y, 0xFF000000+(0<<16)+(250<<8)+154);
                                         break;
 
                                     case 56:
                                         /* TX2 + TX3 + TX4: Tan */
                                         wri.write(new byte[]{(byte) 210, (byte) 180, (byte) 140});
+                                        img.setRGB(x, y, 0xFF000000+(210<<16)+(180<<8)+140);
                                         break;
 
                                     case 57:
                                         /* TX1 + TX2 + TX3 + TX4: Gold2 */
                                         wri.write(new byte[]{(byte) 238, (byte) 201, (byte) 0});
+                                        img.setRGB(x, y, 0xFF000000+(238<<16)+(201<<8)+0);
                                         break;
 
                                     default:
                                         if (ngs) /* No terrain */ {
                                             wri.write(new byte[]{(byte) 255, (byte) 255, (byte) 255});
+                                            img.setRGB(x, y, 0xFF000000+(255<<16)+(255<<8)+255);
                                         } else {
                                             /* Sea-level: Medium Blue */
                                             if (splat.getDem()[indx].getData(x0, y0) == 0) {
                                                 wri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
+                                                img.setRGB(x, y, 0xFF000000+(0<<16)+(0<<8)+170);
                                             } else {
                                                 /* Elevation: Greyscale */
                                                 terrain = (0.5 + Math.pow((double) (splat.getDem()[indx].getData(x0, y0) - splat.getMinElevation()), one_over_gamma) * conversion);
                                                 wri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
+                                                img.setRGB(x, y, 0x00000000) ; //+((int)terrain<<16)+((int)terrain<<8)+(int)terrain);
                                             }
                                         }
                                 }
@@ -190,6 +212,7 @@ public class PPMGenerator {
                     }
                 }
             }
+            ImageIO.write(img, "png", new File(baseFilename +".png"));
             System.out.print("Done!\n");
         } catch (IOException ex) {
             Logger.getLogger(PPMGenerator.class.getName()).log(Level.SEVERE, null, ex);
@@ -223,7 +246,7 @@ public class PPMGenerator {
     }
 
     public void WritePPMLR(String baseFilename, boolean geo, boolean kml, boolean ngs, Site[] xmtr, Dem[] dem) {
-
+ 
         Region region = new Region();
         configureParameters();
         setGeoBounds();
@@ -233,7 +256,7 @@ public class PPMGenerator {
         if (kml && !geo) {
             writeKMLFile(baseFilename, xmtr, north, south, east, west, x);
         }
-
+BufferedImage img = new BufferedImage((int)width, (int)height,BufferedImage.TYPE_INT_RGB);
         FileOutputStream mpWri = null;
         try {
             File mapFile = new File(baseFilename + ".ppm");
@@ -294,16 +317,18 @@ public class PPMGenerator {
 
                             if (red >= 180 && green <= 75 && blue <= 75 && loss != 0) {
                                 mpWri.write(new byte[]{(byte) (255 ^ red), (byte) (255 ^ green), (byte) (255 ^ blue)});
+                                img.setRGB(x, y, 0xFF000000+(255 ^ red<<16)+(255 ^ green<<8)+255 ^ blue);
 
                             } else {
                                 mpWri.write(new byte[]{(byte) 255, (byte) 0, (byte) 0});
-                                //mpWri.write(String.format("%c%c%c", 255, 0, 0));
+                                img.setRGB(x, y, 0xFF000000+(255 <<16)+(0<<8)+0);
                             }
 
                             cityorcounty = true;
                         } else if ((mask & 4) > 0) {
                             /* County Boundaries: Black */
                             mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
+                            img.setRGB(x, y, 0x00000000+(0<<16)+(0<<8)+0);
 
                             cityorcounty = true;
                         }
@@ -312,16 +337,18 @@ public class PPMGenerator {
                             if (loss == 0 || (splat.getContourThreshold() != 0 && loss > Math.abs(splat.getContourThreshold()))) {
                                 if (ngs) /* No terrain */ {
                                     mpWri.write(new byte[]{(byte) 255, (byte) 255, (byte) 255});
-                                    //mpWri.write(String.format("%c%c%c", 255, 255, 255));
+                                    img.setRGB(x, y, 0xFF000000+(255 <<16)+(255<<8)+255);
                                 } else {
                                     /* Display land or sea elevation */
 
                                     if (dem[indx].getData()[x0][y0] == 0) {
                                         mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
+                                        img.setRGB(x, y, 0xFF000000+(0 <<16)+(0<<8)+170);
                                         //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                     } else {
                                         terrain = (int) (0.5 + Math.pow((double) (dem[indx].getData()[x0][y0] - splat.getMinElevation()), one_over_gamma) * conversion);
                                         mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
+                                        img.setRGB(x, y, 0x00000000+((int)terrain <<16)+((int)terrain<<8)+(int)terrain);
                                         // mpWri.write(String.format("%s%s%s", terrain, terrain, terrain));
                                     }
                                 }
@@ -330,15 +357,19 @@ public class PPMGenerator {
 
                                 if (red != 0 || green != 0 || blue != 0) {
                                     mpWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
+                                    img.setRGB(x, y, 0xFF000000+(red <<16)+(green<<8)+blue);
                                     //mpWri.write(String.format("%c%c%c", red, green, blue));
                                 } else /* terrain / sea-level */ {
                                     if (dem[indx].getData()[x0][y0] == 0) {
                                         mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
+                                        img.setRGB(x, y, 0xFF000000+(0 <<16)+(0<<8)+170);
                                         //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                     } else {
                                         /* Elevation: Greyscale */
                                         terrain = (int) (0.5 + Math.pow((double) (dem[indx].getData()[x0][y0] - splat.getMinElevation()), one_over_gamma) * conversion);
                                         mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
+                                        img.setRGB(x, y, 0x00000000) ;
+                                        //img.setRGB(x, y, 0xFF000000+((int)terrain <<16)+((int)terrain<<8)+(int)terrain);
                                         //mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
                                     }
                                 }
@@ -349,10 +380,12 @@ public class PPMGenerator {
  /* we do, display the region as black */
 
                         mpWri.write(new byte[]{(byte) 255, (byte) 0, (byte) 0});
+                        img.setRGB(x, y, 0x00000000); //+(0 <<16)+(0<<8)+0);
                         //mpWri.write(String.format("%c%c%c", 0, 0, 0));
                     }
                 }
             }
+            
             if (!kml && !geo) {
                 /* Display legend along bottom of image
                 * if not generating .kml or .geo output.
@@ -418,12 +451,14 @@ public class PPMGenerator {
 
                         if (indx > region.getLevels()) {
                             mpWri.write(new byte[]{(byte) 255, (byte) 0, (byte) 0});
+                            img.setRGB(x, y, 0xFF000000+(255 <<16)+(0<<8)+0);
                         } else {
                             red = region.getColor()[indx][0];
                             green = region.getColor()[indx][1];
                             blue = region.getColor()[indx][2];
 
                             mpWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
+                            img.setRGB(x, y, 0x00000000); //+(red <<16)+(green<<8)+blue);
                             //mpWri.write(String.format("%c%c%c", red, green, blue));
                         }
                     }
@@ -498,6 +533,7 @@ public class PPMGenerator {
 
                         if (indx > region.getLevels()) {
                             ckWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
+                            
                         } else {
                             red = region.getColor()[indx][0];
                             green = region.getColor()[indx][1];
@@ -509,6 +545,7 @@ public class PPMGenerator {
                 }
 
             }
+            ImageIO.write(img, "png", new File(baseFilename +".png"));
             System.out.print("Done!\n");
         } catch (IOException ex) {
             Logger.getLogger(PPMGenerator.class.getName()).log(Level.SEVERE, null, ex);
@@ -1057,7 +1094,7 @@ public class PPMGenerator {
     }
 
     public void WritePPMSS(String baseFilename, boolean geo, boolean kml, boolean ngs, Site[] xmtr, Dem[] dem) {
-        Region region = new Region();
+         Region region = new Region();
 
         loadSignalColors(xmtr[0], region);
 
@@ -1069,6 +1106,8 @@ public class PPMGenerator {
         if (kml && !geo) {
             writeKMLFile(baseFilename, xmtr, north, south, east, west, x);
         }
+        BufferedImage img = new BufferedImage((int)width, (int)height,BufferedImage.TYPE_INT_RGB);
+       
 
         FileOutputStream mpWri = null;
         try {
@@ -1131,9 +1170,11 @@ public class PPMGenerator {
 
                             if (red >= 180 && green <= 75 && blue <= 75) {
                                 mpWri.write(new byte[]{(byte) (255 ^ red), (byte) (255 ^ green), (byte) (255 ^ blue)});
+                                img.setRGB(x, y, 0xFF000000+((255 ^ red) <<16)+((255 ^ green)<<8)+(255 ^ blue));
                                 //  mpWri.write(String.format("%c%c%c", , 255 ^ green, ));
                             } else {
                                 mpWri.write(new byte[]{(byte) 255, (byte) 0, (byte) 0});
+                                img.setRGB(x, y, 0xFF000000+(255 <<16)+(0<<8)+0);
                                 //mpWri.write(String.format("%c%c%c", 255, 0, 0));
                             }
 
@@ -1142,6 +1183,7 @@ public class PPMGenerator {
                             /* County Boundaries: Black */
 
                             mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
+                            img.setRGB(x, y, 0xFF000000+(0 <<16)+(0<<8)+0);
                             //mpWri.write(String.format("%c%c%c", 0, 0, 0));
 
                             cityorcounty = true;
@@ -1151,16 +1193,19 @@ public class PPMGenerator {
                             if (splat.getContourThreshold() != 0 && signal < splat.getContourThreshold()) {
                                 if (ngs) {
                                     mpWri.write(new byte[]{(byte) 255, (byte) 255, (byte) 255});
+                                    img.setRGB(x, y, 0xFF000000+(255 <<16)+(255<<8)+255);
                                     //mpWri.write(String.format("%c%c%c", 255, 255, 255));
                                 } else {
                                     /* Display land or sea elevation */
 
                                     if (dem[indx].getData(x0, y0) == 0) {
                                         mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
+                                        img.setRGB(x, y, 0xFF000000+(0 <<16)+(0<<8)+170);
                                         //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                     } else {
                                         terrain = (0.5 + Math.pow((double) (dem[indx].getData(x0, y0) -  splat.getMinElevation()), one_over_gamma) * conversion);
                                         mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
+                                        img.setRGB(x, y, 0x00000000+((int)terrain <<16)+((int)terrain<<8)+(int)terrain);
                                         //mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
                                     }
                                 }
@@ -1169,19 +1214,23 @@ public class PPMGenerator {
 
                                 if (red != 0 || green != 0 || blue != 0) {
                                     mpWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
+                                    img.setRGB(x, y, 0xFF000000+(red <<16)+(green<<8)+blue);
                                     //mpWri.write(String.format("%c%c%c", red, green, blue));
                                 } else /* terrain / sea-level */ {
                                     if (ngs) {
                                         mpWri.write(new byte[]{(byte) 255, (byte) 255, (byte) 255});
+                                        img.setRGB(x, y, 0xFF000000+(255 <<16)+(255<<8)+255);
                                         //mpWri.write(String.format("%c%c%c", 255, 255, 255));
                                     } else {
                                         if (dem[indx].getData(x0, y0) == 0) {
                                             mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 170});
+                                            img.setRGB(x, y, 0xFF000000+(0 <<16)+(0<<8)+170);
                                             //mpWri.write(String.format("%c%c%c", 0, 0, 170));
                                         } else {
                                             /* Elevation: Greyscale */
                                             terrain = (0.5 + Math.pow((double) (dem[indx].getData(x0, y0) - splat.getMinElevation()), one_over_gamma) * conversion);
                                             mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
+                                            img.setRGB(x, y, 0x00000000); //+((int)terrain <<16)+((int)terrain<<8)+(int)terrain);
                                             //mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
                                         }
                                     }
@@ -1292,13 +1341,14 @@ public class PPMGenerator {
 
                                     if (indx > region.getLevels()) {
                                         mpWri.write(new byte[]{(byte) 0, (byte) 0, (byte) 0});
+                                        img.setRGB(x, y, 0xFF000000+(0 <<16)+(0<<8)+0);
                                         //mpWri.write(String.format("%c%c%c", 0, 0, 0));
                                     } else {
                                         red = region.getColor()[indx][0];
                                         green = region.getColor()[indx][1];
                                         blue = region.getColor()[indx][2];
                                         mpWri.write(new byte[]{(byte) red, (byte) green, (byte) blue});
-                                        //mpWri.write(String.format("%c%c%c", red, green, blue));
+                                        img.setRGB(x, y, 0x00000000+(red <<16)+(green<<8)+blue);
                                     }
                                 }
                             }
@@ -1420,6 +1470,7 @@ public class PPMGenerator {
                     k++;
 
                 }
+                ImageIO.write(img, "png", new File(baseFilename +".png"));
                 System.out.print("Done!\n");
             } catch (IOException ex) {
                 Logger.getLogger(PPMGenerator.class.getName()).log(Level.SEVERE, null, ex);
@@ -1559,6 +1610,7 @@ public class PPMGenerator {
                                             /* Elevation: Greyscale */
                                             terrain = (0.5 + Math.pow((double) (splat.getDem()[indx].getData(x0, y0) - splat.getMinElevation()), one_over_gamma) * conversion);
                                             mpWri.write(new byte[]{(byte) terrain, (byte) terrain, (byte) terrain});
+                                            
                                             // mpWri.write(String.format("%c%c%c", terrain, terrain, terrain));
                                         }
                                     }
