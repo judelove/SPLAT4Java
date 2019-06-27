@@ -41,25 +41,12 @@ public class SDFFile {
         int x, y, data, indx;
         boolean found = false, free_page = false;
 
-//	for (x=0; name[x]!='.' && name[x]!=0 && x<250; x++)
-//		sdf_file[x]=name[x];
-//
-//	sdf_file[x]=0;
-
-        /* Parse filename for minimum latitude and longitude values */
+       /* Parse filename for minimum latitude and longitude values */
         String[] fileCoordinates = filename.split("[.]")[0].split("_");
         minlat = Integer.parseInt(fileCoordinates[0]);
         maxlat = Integer.parseInt(fileCoordinates[1]);
         minlon = Integer.parseInt(fileCoordinates[2]);
         maxlon = Integer.parseInt(fileCoordinates[3]);
-
-//	sscanf(sdf_file,"%d:%d:%d:%d",&minlat,&maxlat,&minlon,&maxlon);
-//
-//	sdf_file[x]='.';
-//	sdf_file[x+1]='s';
-//	sdf_file[x+2]='d';
-//	sdf_file[x+3]='f';
-//	sdf_file[x+4]=0;
 
         /* Is it already in memory? */
         for (indx = 0, found = false; indx < splat.getDem().length && !found; indx++) {

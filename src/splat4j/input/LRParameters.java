@@ -124,7 +124,7 @@ public class LRParameters {
                     fwr.write(String.format("%.2f\t; Fraction of Time\n", this.rel));
                     fwr.write(String.format("%.2f\t; Transmitter Effective Radiated Power in Watts or dBm (optional)\n", this.erp));
                     fwr.write(String.format("\nPlease consult SPLAT! documentation for the meaning and use of this data.\n"));
-                    System.err.printf("\n\n%c*** There were problems reading your \"%s\" file! ***\nA \"splat.lrp\" file was written to your directory with default data.\n", 7, filename);
+                    System.err.printf("\n\n*** There were problems reading your \"%s\" file! ***\nA \"splat.lrp\" file was written to your directory with default data.\n", filename);
                 } catch (IOException ex) {
                     Logger.getLogger(LRParameters.class.getName()).log(Level.SEVERE, null, ex);
                     System.err.println("Default parameters have been assumed for this analysis.\n");

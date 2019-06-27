@@ -54,7 +54,7 @@ public class SplatEngine {
     private int contourThreshold;
     private double[] elev;  
     int mask_value =1;
-    private boolean noSitesReport, coverage, LRmap, terrain_plot, elevation_plot, height_plot, map, longley_plot, norm, topomap, pt2pt_mode, area_model, ngs, nolospath, fresnel_plot, command_line_log, metric, kml, dbm, geo, smoothContours, olditm, smooth_contours, area_mode, gpsav;
+    private boolean noSitesReport, generatePpm,isTransparentPng, coverage, LRmap, terrain_plot, elevation_plot, height_plot, map, longley_plot, norm, topomap, pt2pt_mode, area_model, ngs, nolospath, fresnel_plot, command_line_log, metric, kml, dbm, geo, smoothContours, olditm, smooth_contours, area_mode, gpsav;
 
 
     SplatEngine(Configuration config) {
@@ -1019,7 +1019,7 @@ public class SplatEngine {
             System.out.printf("\nand %.2f %s of ground clutter", metric ? clutter * config.METERS_PER_FOOT : clutter, metric ? "meters" : "feet");
         }
 
-        System.out.print("...\n\n 0% to  25% ");
+        
 
         if (plo_filename != null) {
             FileWriter wri = null;
@@ -1031,6 +1031,7 @@ public class SplatEngine {
                 /* th=pixels/degree divided by 64 loops per
                 progress indicator symbol (.oOo) printed. */
                 th = getPpd() / 64.0;
+                System.out.print("...\n\n 0% to  25% ");
                 z = (int) (th * Utils.reduceAngle(maxWest - minWest, config));
                 for (lon = minwest, x = 0, y = 0; (Utils.lonDiff(lon, (double) maxWest) <= 0.0); y++, lon = minwest + (dpp * (double) y)) {
                     if (lon >= 360.0) {
@@ -1927,6 +1928,34 @@ public class SplatEngine {
      */
     public void setLr(LR lr) {
         this.lr = lr;
+    }
+
+    /**
+     * @return the generatePng
+     */
+    public boolean isGeneratePpm() {
+        return generatePpm;
+    }
+
+    /**
+     * @param generatePng the generatePng to set
+     */
+    public void setGeneratePpm(boolean generatePpm) {
+        this.generatePpm = generatePpm;
+    }
+
+    /**
+     * @return the isTransparentPng
+     */
+    public boolean isTransparentPng() {
+        return isTransparentPng;
+    }
+
+    /**
+     * @param isTransparentPng the isTransparentPng to set
+     */
+    public void setTransparentPng(boolean isTransparentPng) {
+        this.isTransparentPng = isTransparentPng;
     }
 
 }

@@ -5,7 +5,6 @@
  */
 package splat4j;
 
-//#include <stdio.h>
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,18 +20,11 @@ import splat4j.input.QTHFile;
 import splat4j.input.SDFAgent;
 import splat4j.input.UDTFile;
 import splat4j.output.GraphGenerator;
+import splat4j.output.ImageGenerator;
 import splat4j.output.KMLGenerator;
-import splat4j.output.PPMGenerator;
 import splat4j.output.ReportGenerator;
 
-//#include <math.h>
-//#include <stdlib.h>
-//#include <string.h>
-//#include <ctype.h>
-//#include <bzlib.h>
-//#include <unistd.h>
-//#include "fontdata.h"
-//#include "splat.h"
+
 /**
  *****************************************************************************\
  * SPLAT!: An RF Signal Path Loss And Terrain Analysis Tool (Java Version) *
@@ -45,7 +37,8 @@ import splat4j.output.ReportGenerator;
  * * * This program is distributed in the hope that it will useful, but WITHOUT
  * * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or *
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License * for
- * more details.	* * @author Jude Mukundane
+ * more details.	
+ * * @author Jude Mukundane
  */
 public class SPLAT4J {
 
@@ -73,7 +66,7 @@ public class SPLAT4J {
             string, rxfilenames,
             txfileNames,
             udt_file, ani_filename,
-            ano_filename, ext, logfile="C:\\tests\\log.splt", sdf_path;
+            ano_filename, ext, logfile="log.splt", sdf_path;
 
 //        char[] mapfile = new char[255], header = new char[80],
 //                elevation_file = new char[255], height_file = new char[255],
@@ -180,7 +173,7 @@ public class SPLAT4J {
         System.out.printf("      -nf do not plot Fresnel zones in height plots\n");
         System.out.printf("      -fz Fresnel zone clearance percentage (default = 60)\n");
         System.out.printf("      -gc ground clutter height (feet/meters)\n");
-        System.out.printf("     -ngs display greyscale topography as white in .ppm files\n");
+        System.out.printf("     -ngs display greyscale topography as white in image files\n");
         System.out.printf("     -erp override ERP in .lrp file (Watts)\n");
         System.out.printf("     -ano name of alphanumeric output file\n");
         System.out.printf("     -ani name of alphanumeric input file\n");
@@ -192,6 +185,8 @@ public class SPLAT4J {
         System.out.printf("   -gpsav preserve gnuplot temporary working files after SPLAT! execution\n");
         System.out.printf("  -metric employ metric rather than imperial units for all user I/O\n");
         System.out.printf("  -olditm invoke Longley-Rice rather than the default ITWOM model\n\n");
+        System.out.printf("  -png generate PNG image instead of PPM image format \n\n");
+        System.out.printf("  -png_tr generate PNG image instead of PPM image format, but with transparency where no signal \n\n");
         System.out.printf("If that flew by too fast, consider piping the output through 'less':\n");
 
         if (!config.HD_ON) {
@@ -752,6 +747,7 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
                         splat.setArea_mode(true);
                         max_txsites = 4;
                     }} catch (Exception ex) {
+                        System.err.println("Wrong argument supplied for -c or -L option. Height expected");
                         return false;
                     }
                     break;
@@ -825,6 +821,24 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
                 case "-N":
                     splat.setNolospath(true);
                     splat.setNoSitesReport(true);
+                    break;
+                    
+                case "-ppm":
+                    if(splat.isTransparentPng())
+                    {
+                        System.err.println("This option can not be specified with the option for transparent PNG (-png_tr)");
+                        return false;
+                    }
+                    splat.setGeneratePpm(true);
+                    break;
+                    
+                case "-png_tr":
+                    if(splat.isGeneratePpm())
+                    {
+                        System.err.println("This option can not be specified with the option to generate PPM (-ppm)");
+                        return false;
+                    }
+                    splat.setTransparentPng(true);
                     break;
 
                 case "-d":
@@ -1000,17 +1014,17 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
     
 
     static void generateGraphs() {
-        PPMGenerator gen = new PPMGenerator(config, splat);
+        ImageGenerator gen = new ImageGenerator(config, splat);
         if (splat.isCoverage() || splat.isPt2pt_mode() || splat.isTopomap()) {
-            gen.WritePPM(mapfile, splat.isGeo(), splat.isKml(), splat.isNgs(), txSites.toArray(new Site[txSites.size()]));
+            gen.WriteImage(mapfile, splat.isGeo(), splat.isKml(), splat.isNgs(), txSites.toArray(new Site[txSites.size()]));
         } else {
             if (splat.getLr() == null || splat.getLr().getErp() == 0.0) {
-                gen.WritePPMLR(mapfile, splat.isGeo(), splat.isKml(), splat.isNgs(), txSites.toArray(new Site[txSites.size()]), splat.getDem());
+                gen.WriteLRImage(mapfile, splat.isGeo(), splat.isKml(), splat.isNgs(), txSites.toArray(new Site[txSites.size()]), splat.getDem());
             } else {
                 if (splat.isDbm()) {
-                    gen.WritePPMDBM(mapfile, splat.isGeo(), splat.isKml(), splat.isNgs(), txSites.toArray(new Site[txSites.size()]));
+                    gen.WriteDBMImage(mapfile, splat.isGeo(), splat.isKml(), splat.isNgs(), txSites.toArray(new Site[txSites.size()]));
                 } else {
-                    gen.WritePPMSS(mapfile, splat.isGeo(), splat.isKml(), splat.isNgs(), txSites.toArray(new Site[txSites.size()]), splat.getDem());
+                    gen.WriteSSImage(mapfile, splat.isGeo(), splat.isKml(), splat.isNgs(), txSites.toArray(new Site[txSites.size()]), splat.getDem());
                 }
             }
         }
