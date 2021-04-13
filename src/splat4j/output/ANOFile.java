@@ -11,8 +11,6 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import splat4j.Configuration;
-import splat4j.Dem;
-import splat4j.LR;
 import splat4j.SplatEngine;
 import splat4j.Utils;
 import splat4j.input.SDFAgent;
@@ -44,14 +42,6 @@ public class ANOFile {
         if (anoFile.exists()) {
             try {
                 Scanner scanner = new Scanner(anoFile);
-//            while(scanner.hasNextLine())
-//            {
-//                String comments = scanner.nextLine();
-//                if (comments.startsWith(";"))
-//                        {
-//                            continue;
-//                        }
-//            }
 
                 String line = scanner.nextLine().split(";")[0];
                 max_west = Integer.parseInt(line.split(" ")[0]);

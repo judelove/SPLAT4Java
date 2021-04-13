@@ -172,21 +172,10 @@ public class GraphGenerator {
             FileWriter refWri = new FileWriter(referenceFile);
             for (x = 1; x < path.getLength() - 1; x++) {
                 remote = new Site("", "", path.getLat(x), path.getLon(x), 0.0f);
-//		remote.lat=path.lat[x];
-//		remote.lon=path.lon[x];
-//		remote.getAlt()=0.0;
                 angle = Utils.elevationAngle(destination, remote, splat, config);
 
                 if (splat.getClutter() > 0.0) {
                     remote2 = new Site("", "", path.getLat(x), path.getLon(x), (float)(path.getElevation()[x] != 0.0 ? splat.getClutter() : 0.0));
-//			remote2.lat=path.lat[x];
-//			remote2.lon=path.lon[x];
-//
-//			if (path.getElevation()[x]!=0.0)
-//				remote2.getAlt()=clutter;
-//			else
-//				remote2.getAlt()=0.0;
-
                     clutter_angle = Utils.elevationAngle(destination, remote2, splat, config);
                 }
 
@@ -359,9 +348,6 @@ public class GraphGenerator {
                 fres6Wri = new FileWriter(fresnel6File);
             }   for (x = 0; x < path.getLength() - 1; x++) {
                 remote = new Site("", "", path.getLat(x), path.getLon(x), 0.0f);
-//            remote.lat = path.lat[x];
-//            remote.lon = path.lon[x];
-//            remote.getAlt() = 0.0;
 
 terrain = Utils.getElevation(remote, splat, config);
 

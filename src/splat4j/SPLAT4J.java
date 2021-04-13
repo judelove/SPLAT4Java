@@ -68,13 +68,7 @@ public class SPLAT4J {
             udt_file, ani_filename,
             ano_filename, ext, logfile="log.splt", sdf_path;
 
-//        char[] mapfile = new char[255], header = new char[80],
-//                elevation_file = new char[255], height_file = new char[255],
-//                longley_file = new char[255], terrain_file = new char[255],
-//                string = new char[255], rxfile = new char[255],
-//                txfile = new char[255],
-//                udt_file = new char[255], ani_filename = new char[255],
-//                ano_filename = new char[255], ext = new char[20], logfile = new char[255];
+
     static double altitude = 0.0, altitudeLR = 0.0, tx_range = 0.0, max_range,
             rx_range = 0.0, deg_range = 0.0, deg_limit = 0.0,
             deg_range_lon, er_mult, contour_threshold, LRaltitude;
@@ -219,11 +213,6 @@ public class SPLAT4J {
     }
 
     static void configure() {
-      //
-//        for (x = 0; x < 4; x++) {
-//            txSites.add(x, new Site(null, null, 91.0, 361.0, 0));
-//        }
-//
 
 if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
 {
@@ -262,8 +251,7 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
         /* Load the required SDF files */
         SDFAgent sdfAgent = new SDFAgent(splat.getSdfPath());
         sdfAgent.loadTopoData(config, splat, max_lon, min_lon, max_lat, min_lat);
-        //LoadTopoData(max_lon, min_lon, max_lat, min_lat);
-
+   
         if (splat.isArea_mode() || splat.isTopomap()) {
             for (z = 0; z < txsites && z < max_txsites; z++) {
                 /* "Ball park" estimates used to load any additional
@@ -361,11 +349,6 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
                 splat.setMaxNorth((int) Math.floor(txSites.get(z).getLat() + deg_range));
                 splat.setMinWest((int) Math.floor(txSites.get(z).getLon() - deg_range_lon));
                 
-//                north_min = (int) Math.floor(txSites.get(z).getLat() - deg_range);
-//                north_max = (int) Math.floor(txSites.get(z).getLat() + deg_range);
-//
-//                west_min = (int) Math.floor(txSites.get(z).getLon() - deg_range_lon);
-
                 while (splat.getMinWest() < 0) {
                     splat.setMinWest(splat.getMinWest() + 360);
                 }
@@ -431,21 +414,6 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
                 } else {
                     ext = "png";
                 }
-
-//                for (x = y - 1; x > 0 && terrain_file[x] != '.'; x--);
-//
-//                if (x > 0) /* Extension found */ {
-//                    for (z = x + 1; z <= y && (z - (x + 1)) < 10; z++) {
-//                        ext[z - (x + 1)] = tolower(terrain_file[z]);
-//                    }
-//
-//                    ext[z - (x + 1)] = 0;
-//                    /* Ensure an ending 0 */
-//                    terrain_file[x] = 0;
-//                    /* Chop off extension */
-//                } else {
-//                    strncpy(ext, "png\0", 4);
-//                }
             }
 
             if (splat.isElevation_plot()) {
@@ -527,14 +495,11 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
                             LRParameters lrp = new LRParameters(splat);
                             lrp.loadLRFile(longley_file);
                             new ReportGenerator(config, splat).PathReport(txSites.get(x), rxSites.get(0),"profile", true); //destination, header, true, true, true, altitude, rxlat, string, string, true);
-                            //ReadLRParm(tx_site[x], 0);
-                            //PathReport(tx_site[x], rx_site, string, 0);
                         } else {
                             LRParameters lrp = new LRParameters(splat);
                             lrp.loadLRFile("");
                             //ReadLRParm(tx_site[x], 1);
                             new ReportGenerator(config, splat).PathReport(txSites.get(x), rxSites.get(0),"profile",  false);
-                            //PathReport(tx_site[x], rx_site, string, longley_file[0]);
                         }
                     }
 
@@ -593,28 +558,6 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
                         splat.PlaceMarker(txSites.get(x));
                     }
                 }
-
-//            if (cities) {
-//
-//                for (y = 0; y < cities; y++) {
-//                    LoadCities(city_file[y]);
-//                }
-//
-//                System.out.printf("\n");
-//                fflush(stdout);
-//            }
-//
-//            /* Load city and county boundary data files */
-//            if (bfs) {
-//                for (y = 0; y < bfs; y++) {
-//                    LoadBoundaries(boundary_file[y]);
-//                }
-//
-//                System.out.printf("\n");
-//                fflush(stdout);
-//            }
-                //generateGraphs();
-                /* Plot the map */
 
             }
 
@@ -890,16 +833,7 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
                         cities++;
                     }
                     break;
-//                case "-b":
-//                    bfs = 0;
-//                    /* Read Transmitter Location */
-//                    while (bfs < 5 && !args[x + bfs].startsWith("-")) {
-//                        boundary_file[bfs] = args[x + bfs]; //dd(new Site());
-//
-//                        bfs++;
-//                    }
-//                    break;
-                case "-f":
+               case "-f":
                     try {
                         double forced_freq = Double.parseDouble(args[x + 1]);
                         splat.setForcedFreq(Math.min(20.0e3, forced_freq < 20 ? 0 : forced_freq));
@@ -937,26 +871,7 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
         return true;
     }
 
-//replace below with error checking on loading qth sites, check for atleast one qth site for tx
-//    for (x  = 0, y = 0;
-//    x< txsites ;
-//    x
-//
-//    
-//        ++) {
-//            if (tx_site[x].lat == 91.0 && tx_site[x].lon == 361.0) {
-//            fprintf(stderr, "\n*** ERROR: Transmitter site #%d not found!", x + 1);
-//            y++;
-//        }
-//    }
-//
-//    if (y
-//
-//    
-//        ) {
-//            fprintf(stderr, "%c\n\n", 7);
-//        exit(-1);
-//    }
+
     /* No major errors were detected.  Whew!  :-) */
   static   boolean locateSDFFiles() {
         /* If no SDF path was specified on the command line (-d), check
@@ -977,8 +892,7 @@ if(splat.isMap() && (mapfile == null || mapfile.isEmpty()))
                 // splat.setSdfPath(sdf_path);
                 System.out.printf("found SDF path: %s", splat.getSdfPath());
                 return true;
-            }
-            
+            }            
         }
         else
         {

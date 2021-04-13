@@ -72,19 +72,15 @@ public class SDFFile {
         if (free_page && !found && indx >= 0 && indx < splat.getDem().length) {
             /* Search for SDF file in current working directory first */
 
-//            strncpy(path_plus_name, sdf_file, 255);
-//
-//            fd = fopen(path_plus_name, "rb");
+
             File sdfFile = new File(filename);
 
             if (!sdfFile.exists()) {
                 /* Next, try loading SDF file from path specified
 			   in $HOME/.splat_path file or by -d argument */
 
-//                strncpy(path_plus_name, sdf_path, 255);
-//                strncat(path_plus_name, sdf_file, 254);
-//
-//                fd = fopen(path_plus_name, "rb");
+
+
                 sdfFile = new File(sdf_dir + "/" + filename);
             }
 
@@ -95,17 +91,7 @@ public class SDFFile {
                     Scanner scanner = new Scanner(sdfFile);
                     splat.setDem(indx, new Dem(Integer.parseInt(scanner.nextLine()), Integer.parseInt(scanner.nextLine()), Integer.parseInt(scanner.nextLine()), Integer.parseInt(scanner.nextLine()), splat.getIppd()));
 
-//                fgets(line, 19, fd);
-//                sscanf(line, "%d",  & dem[indx].max_west);
-//
-//                fgets(line, 19, fd);
-//                sscanf(line, "%d",  & dem[indx].min_north);
-//
-//                fgets(line, 19, fd);
-//                sscanf(line, "%d",  & dem[indx].min_west);
-//
-//                fgets(line, 19, fd);
-//                sscanf(line, "%d",  & dem[indx].max_north);
+
                     for (x = 0; x < splat.getIppd(); x++) {
                         for (y = 0; y < splat.getIppd(); y++) {
                             //fgets(line, 19, fd);
@@ -173,7 +159,6 @@ public class SDFFile {
                     }
 
                     System.out.println(" Done!");
-//fflush(stdout);
 
                     return 1;
                 } catch (FileNotFoundException ex) {
@@ -246,12 +231,7 @@ public class SDFFile {
 
             if (free_page && !found && indx >= 0 && indx < splat.getDem().length) {
                 System.out.printf("Region  \"%s\" assumed as sea-level into page %d...", filename, indx + 1);
-                //fflush(stdout);
                 splat.setDem(indx, new Dem(maxlon, minlat, minlon, maxlat, config.IPPD));
-//                splat.getDem()[indx].setMaxWest(getMaxlon());
-//                splat.getDem()[indx].setMinNorth(getMinlat());
-//                splat.getDem()[indx].setMinWest(getMinlon());
-//                splat.getDem()[indx].setMaxNorth(getMaxlat());
 
                 /* Fill DEM with sea-level topography */
                 for (x = 0; x < splat.getIppd(); x++) {
@@ -315,8 +295,7 @@ public class SDFFile {
                 }
 
                 System.out.println(" Done!");
-                //fflush(stdout);
-
+           
                 return_value = 1;
             }
         }

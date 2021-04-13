@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import splat4j.Configuration;
-import splat4j.Dem;
 import splat4j.Path;
 import splat4j.Site;
 import splat4j.SplatEngine;

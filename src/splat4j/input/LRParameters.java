@@ -78,17 +78,9 @@ public class LRParameters {
                         lr.setErp((Math.pow(10.0, (lr.getErp() - 32.14) / 10.0)));
                     }
 
-//		fclose(fd);
-//
-//		if (forced_erp!=-1.0)
-//			LR.erp=forced_erp;
-//
-//		if (forced_freq>=20.0 && forced_freq<=20000.0)
-//			LR.frq_mhz=forced_freq;
-                    // if (ok) {
+
                     this.loadAzFile(filename.replace("lrp", "az"));
                     this.loadElFile(filename.replace("lrp", "el"));
-                    // }
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(LRParameters.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (NumberFormatException ex) {
@@ -177,34 +169,13 @@ public class LRParameters {
                     az = Double.parseDouble(azAmp.split(" ")[0]);
                     amplitude = Double.parseDouble(azAmp.split(" ")[1]);
 
-//		fgets(string,254,fd);
-//		pointer=strchr(string,';');
-//
-//		if (pointer!=NULL)
-//			*pointer=0;
-//
-//		sscanf(string,"%f %f",&az, &amplitude);
-//
-//		do
-//		{
-                    x = (int) Math.rint(az);
+         x = (int) Math.rint(az);
 
                     if (x >= 0 && x <= 360) {
                         azimuth[x] += amplitude;
                         readCount[x]++;
                     }
 
-//			fgets(string,254,fd);
-//			pointer=strchr(string,';');
-//
-//			if (pointer!=NULL)
-//				*pointer=0;
-//
-//			sscanf(string,"%f %f",&az, &amplitude);
-//
-//		} while (feof(fd)==0);
-//
-//		fclose(fd);
                 }
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(LRParameters.class.getName()).log(Level.SEVERE, null, ex);
@@ -297,13 +268,7 @@ azimuth pattern data in its final form. */
                 /* Read mechanical tilt (degrees) and
                 tilt azimuth in degrees measured
                 clockwise from true North. */
-//            fgets(string, 254, fd);
-//            pointer = strchr(string, ';');
-//
-//            if (pointer != NULL) {
-//                 * pointer = 0;
-//            }
-                String mechTiltAzimuth = scanner.nextLine().split(";")[0];
+          String mechTiltAzimuth = scanner.nextLine().split(";")[0];
                 mechanical_tilt = Double.parseDouble(mechTiltAzimuth.split(" ")[0]);
                 tilt_azimuth = Double.parseDouble(mechTiltAzimuth.split(" ")[1]);
 
@@ -316,17 +281,7 @@ normalized field radiation pattern amplitude
                     String azAmp = scanner.nextLine().split(";")[0];
                     elevation = Double.parseDouble(azAmp.split(" ")[0]);
                     amplitude = Double.parseDouble(azAmp.split(" ")[1]);
-//            
-//            fgets(string, 254, fd);
-//            pointer = strchr(string, ';');
-//
-//            if (pointer != NULL) {
-//                 * pointer = 0;
-//            }
-//
-//            sscanf(string, "%f %f",  & elevation,  & amplitude);
-//
-//            while (feof(fd) == 0) {
+
 //                /* Read in normalized radiated field values
 //			   for every 0.01 degrees of elevation between
 //			   -10.0 and +90.0 degrees */
@@ -337,18 +292,7 @@ normalized field radiation pattern amplitude
                         el_pattern[x] += amplitude;
                         readCount[x] = readCount[x] + 1;
                     }
-//
-//                fgets(string, 254, fd);
-//                pointer = strchr(string, ';');
-//
-//                if (pointer != NULL) {
-//                     * pointer = 0;
-//                }
-//
-//                sscanf(string, "%f %f",  & elevation,  & amplitude);
-//            }
-//
-//            fclose(fd);
+
                 }
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(LRParameters.class.getName()).log(Level.SEVERE, null, ex);

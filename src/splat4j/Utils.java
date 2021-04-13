@@ -530,8 +530,6 @@ public class Utils {
 
             path.setLat(c, lat2);
             path.setLon(c, lon2);
-            //tempsite.lat=lat2;
-            //tempsite.lon=lon2;
             path.setElevation(c, getElevation(new Site(null, null, lat2, lon2, 0), splat, config));
             path.setDistance(c, distance);
 

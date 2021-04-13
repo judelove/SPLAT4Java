@@ -47,15 +47,7 @@ public class UDTFile {
 
         if (udtFile.exists()) {
             try {
-                //  File tempFile = File.createTempFile("temp", tempname);
-                //fd2 = fopen(tempname, "w");
 
-//		fgets(input,78,fd1);
-//
-//		pointer=strchr(input,';');
-//
-//		if (pointer!=null)
-//			*pointer=0;
                 System.out.printf("\nReading \"%s\"... ", filename);
                 Scanner scanner = new Scanner(udtFile);
                 while (scanner.hasNextLine()) {
@@ -68,16 +60,7 @@ public class UDTFile {
                     lines.add(line);
                 }
 
-//                for (x = 0, y = 0, z = 0; x < 78 && input[x] != 0 && z < 3; x++) {
-//                    if (input[x] != ',' && y < 78) {
-//                        str[z][y] = input[x];
-//                        y++;
-//                    } else {
-//                        str[z][y] = 0;
-//                        z++;
-//                        y = 0;
-//                    }
-//                }
+
                 for (String entry : lines) {
                     str = entry.split(",");
                     latitude = Utils.readBearing(str[0]);
@@ -87,11 +70,7 @@ public class UDTFile {
                         longitude += 360.0;
                     }
 
-                    /* Remove <CR> and/or <LF> from antenna height string */
-//                for (i = 0; str[2][i] != 13 && str[2][i] != 10 && str[2][i] != 0; i++);
-//
-//                str[2][i] = 0;
-
+                   
                     /* The terrain feature may be expressed in either
 feet or meters.  If the letter 'M' or 'm' is
 discovered in the string, then this is an
@@ -102,67 +81,7 @@ as being expressed in feet.  */
                     AddElevation(latitude, longitude, height, splat);
                 }
 
-//			if (height > 0.0) {
-//                    fprintf(fd2, "%d, %d, %f\n", (int) rint(latitude / dpp), (int) rint(longitude / dpp), height);
-//                }
-//
-//                fgets(input, 78, fd1);
-//
-//                pointer = strchr(input, ';');
-//
-//                if (pointer != null) {
-//                     * pointer = 0;
-//                }
-//            }
-//
-//            fclose(fd1);
-//            fclose(fd2);
-//            close(fd);
-//
-//            System.out.printf(stdout, "Done!");
-//
-//            fd1 = fopen(tempname, "r");
-//            fd2 = fopen(tempname, "r");
-//
-//            y = 0;
-//
-//            fscanf(fd1, "%d, %d, %lf",  & xpix,  & ypix,  & height);
-//
-//            do {
-//                x = 0;
-//                z = 0;
-//
-//                fscanf(fd2, "%d, %d, %lf",  & tempxpix,  & tempypix,  & tempheight);
-//
-//                do {
-//                    if (x > y && xpix == tempxpix && ypix == tempypix) {
-//                        z = 1;
-//                        /* Dupe! */
-//
-//                        if (tempheight > height) {
-//                            height = tempheight;
-//                        }
-//                    } else {
-//                        fscanf(fd2, "%d, %d, %lf",  & tempxpix,  & tempypix,  & tempheight);
-//                        x++;
-//                    }
-//
-//                } while (feof(fd2) == 0 && z == 0);
-//
-//                if (z == 0) /* No duplicate found */ {
-//                    AddElevation(xpix * dpp, ypix * dpp, height);
-//                }
-//
-//                fscanf(fd1, "%d, %d, %lf",  & xpix,  & ypix,  & height);
-//                y++;
-//
-//                rewind(fd2);
-//
-//            } while (feof(fd1) == 0);
-//
-//            fclose(fd1);
-//            fclose(fd2);
-//            unlink(tempname);
+
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(UDTFile.class.getName()).log(Level.SEVERE, null, ex);
             }

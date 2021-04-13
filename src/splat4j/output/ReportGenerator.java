@@ -61,8 +61,6 @@ public class ReportGenerator {
             lambda = 9.8425e8 / (f * 1e6);
         }
 
-        //File outputFile = new File(outfile);
-        //Filewriter writ = new Filewriter(outputFile);
         if (splat.getClutter() > 0.0) {
             try {
                 writ.write("Terrain has been raised by");
@@ -90,9 +88,7 @@ public class ReportGenerator {
 	   acos(A) > acos(B), then B > A. */
                 for (x = path.getLength() - 1; x > 0; x--) {
                     site_x = new Site(null, null, path.getLat(x), path.getLon(x), 0.0f);
-//                        .getLat()=path.getLat()[x];
-//		site_x.getLon()=path.getLon()[x];
-//		site_x.setAlt.alt=0.0;
+
 
                     h_x = Utils.getElevation(site_x,  splat, config) + config.EARTHRADIUS + splat.getClutter();
                     d_x = 5280.0 * Utils.distance(rcvr, site_x, config);
@@ -634,10 +630,7 @@ ITWOMResult result = null;
                         y = 19;
                     }
 
-//                    for (x = 6; x < y; x++) {
-//                        propstring[x - 6] = strmode[x];
-//                    }
-                    // propstring[x] = 0;
+                   
                     if (result.getStrmode().contains("_Diff")) {
                         repWri.write("Diffraction Dominant\n");
                     }
@@ -690,14 +683,10 @@ ITWOMResult result = null;
                     basename = "profile";
                     term = "png";
                     ext = "png";
-//                    strncpy(basename, "profile\0", 8);
-//                    strncpy(term, "png\0", 4);
-//                    strncpy(ext, "png\0", 4);
+
                 } else {
                     /* Extract extension and terminal type from "name" */
 
-//                    ext[0] = 0;
-//                    y = strlen(name);
                     basename = name;
                     //strncpy(basename, name, 254);
                     if (name.contains(".")) {
@@ -705,25 +694,6 @@ ITWOMResult result = null;
                     } else {
                         term = ext = "png";
                     }
-//                    for (x = y - 1; x > 0 && name[x] != '.'; x--);
-//
-//                    if (x > 0) /* Extension found */ {
-//                        for (z = x + 1; z <= y && (z - (x + 1)) < 10; z++) {
-//                            ext[z - (x + 1)] = tolower(name[z]);
-//                            term[z - (x + 1)] = name[z];
-//                        }
-//
-//                        ext[z - (x + 1)] = 0;
-//                        /* Ensure an ending 0 */
-//                        term[z - (x + 1)] = 0;
-//                        basename[x] = 0;
-//                    }
-//                }
-//
-//                if (ext[0] == 0) /* No extension -- Default is png */ {
-//                    strncpy(term, "png\0", 4);
-//                    strncpy(ext, "png\0", 4);
-//                }
 
                     /* Either .ps or .postscript may be used
                         as an extension for postscript output. */
@@ -737,8 +707,7 @@ ITWOMResult result = null;
                     FileWriter wri;
                     try {
                         wri = new FileWriter(gpFile);
-                        //fd = fopen("splat.gp", "w");
-
+                    
                         wri.write("set grid\n");
                         wri.write(String.format("set yrange [%2.3f to %2.3f]\n", minloss, maxloss));
                         wri.write("set encoding iso_8859_1\n");
@@ -782,9 +751,7 @@ ITWOMResult result = null;
                         System.err.print("\n*** ERROR: Error occurred invoking gnuplot!\n");
                     }
                 }
-//                if (x != -1 && !splat.isGpsav()) {
-//                    new File("profile.gp").delete();
-//                }
+
             }
         } catch (IOException ex) {
             Logger.getLogger(ReportGenerator.class.getName()).log(Level.SEVERE, null, ex);

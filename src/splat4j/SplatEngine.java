@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import splat4j.ITWOM.ITWOM3;
 import splat4j.ITWOM.ITWOM3.ITWOMResult;
 import static splat4j.SPLAT4J.ani_filename;
-import splat4j.input.CitiesFile;
 import splat4j.input.LRParameters;
 import splat4j.output.ANOFile;
 
@@ -27,7 +26,6 @@ public class SplatEngine {
     private Path path;
     private LR lr;
     private Dem[] dem;
-    //private String version, name;
     private Configuration config;
     private String string;
     private String sdfPath;
@@ -67,18 +65,6 @@ public class SplatEngine {
     }
 
     
-    
-
-//    abstract void point_to_point(double[] elev, double tht_m, double rht_m, double eps_dielect, double sgm_conductivity, double eno_ns_surfref,
-//            double frq_mhz, int radio_climate, int pol, double conf,
-//            double rel, double dbloss, char strmode, int errnum);
-//
-//    abstract void point_to_point_ITM(double elev[], double tht_m, double rht_m,
-//            double eps_dielect, double sgm_conductivity, double eno_ns_surfref,
-//            double frq_mhz, int radio_climate, int pol, double conf,
-//            double rel, double dbloss, char strmode, int errnum);
-
-//double ITWOMVersion();
     int PutMask(double lat, double lon, int value) {
         /* Lines, text, markings, and coverage areas are stored in a
 	   mask that is combined with topology data when topographic
@@ -466,7 +452,6 @@ public class SplatEngine {
         if (ani_filename != null) {
             LRParameters lrp = new LRParameters(this);
             lrp.loadLRFile(txSites.get(0).getFilename());
-            //ReadLRParm(tx_site[0], 0);
             /* Get ERP status */
             ANOFile anofile = new ANOFile(config, this);
             anofile.LoadANO(ani_filename);
@@ -478,23 +463,6 @@ public class SplatEngine {
             if (rxSites.size() > 0) {
                 PlaceMarker(rxSites.get(0));
             }
-
-//            if (bfs) {
-//                for (x = 0; x < bfs; x++) {
-//                    LoadBoundaries(boundary_file[x]);
-//                }
-//
-//                System.out.printf("\n");
-//                fflush(stdout);
-//            }
-//            if (cities > 0) {
-//                for (x = 0; x < cities; x++) {
-//                    CitiesFile citiesFile = new CitiesFile(city_file.get(x));
-//                    citiesFile.loadCities();
-//                }
-//
-//                System.out.printf("\n");
-//            }
         }
     }
 
@@ -685,9 +653,6 @@ public class SplatEngine {
                 strmode = result.getStrmode();
 
                 temp = new Site("", "", path.getLat(y), path.getLon(y), 0);
-                //temp.lat=path.getLat(y);
-                
-                //temp.lon=path.getLon(y);
 
                 azimuth = (Utils.azimuth(source, temp, config));
 
@@ -850,10 +815,7 @@ public class SplatEngine {
             }
 
             edge = new Site("", "", maxNorth, lon, (float)altitude);
-            //edge.lat = max_north;
-            //edge.lon = lon;
-            //edge.alt = getAltitude();
-
+       
             PlotPath(source, edge, mask_value);
             count++;
 
@@ -875,9 +837,6 @@ public class SplatEngine {
         z = (int) (th * (double) (maxNorth - minNorth));
 
         for (lat = maxnorth, x = 0, y = 0; lat >= (double) minNorth; y++, lat = maxnorth - (dpp * (double) y)) {
-//            edge.lat = lat;
-//            edge.lon = min_west;
-//            edge.alt = getAltitude();
 
             edge = new Site("", "", lat, minWest, (float)altitude);
 
@@ -906,9 +865,6 @@ public class SplatEngine {
                 lon -= 360.0;
             }
             edge = new Site("", "", minNorth, lon, (float)altitude);
-//            edge.lat = min_north;
-//            edge.lon = lon;
-//            edge.alt = getAltitude();
 
             PlotPath(source, edge, mask_value);
             count++;
@@ -931,10 +887,6 @@ public class SplatEngine {
         z = (int) (th * (double) (maxNorth - minNorth));
 
         for (lat = (double) minNorth, x = 0, y = 0; lat < (double) maxNorth; y++, lat = (double) minNorth + (getDpp() * (double) y)) {
-//            edge.lat = lat;
-//            edge.lon = max_west;
-//            edge.alt = getAltitude();
-
             edge = new Site("", "", lat, maxWest, (float)altitude);
 
             PlotPath(source, edge, mask_value);
@@ -976,8 +928,8 @@ public class SplatEngine {
 	   generated topographic map based on a receiver located
 	   at the specified altitude (in feet AGL).  Results
 	   are stored in memory, and written out in the form
-	   of a topographic map when the WritePPMLR() or
-	   WritePPMSS() functions are later invoked. */
+	   of a topographic map when the WriteLRImage() or
+	   WriteSSImage() functions are later invoked. */
 
         int y, z, count;
         Site edge;
@@ -1039,9 +991,6 @@ public class SplatEngine {
                     }
 
                     edge = new Site("", "", maxNorth, lon, (float)altitude);
-//            edge.lat = max_north;
-//            edge.lon = lon;
-//            edge.alt = getAltitude();
 
                     PlotLRPath(source, edge, mask_value, wri);
                     count++;
@@ -1063,9 +1012,6 @@ public class SplatEngine {
                 for (lat = maxnorth, x = 0, y = 0; lat >= (double) minNorth; y++, lat = maxnorth - (dpp * (double) y)) {
 
                     edge = new Site("", "", lat, minWest, (float)altitude);
-//            edge.lat = lat;
-//            edge.lon = min_west;
-//            edge.alt = getAltitude();
 
                     PlotLRPath(source, edge, mask_value, wri);
                     count++;
@@ -1089,9 +1035,6 @@ public class SplatEngine {
                         lon -= 360.0;
                     }
                     edge = new Site("", "", minNorth, lon, (float)altitude);
-//            edge.lat = min_north;
-//            edge.lon = lon;  
-//            edge.alt = getAltitude();
 
                     PlotLRPath(source, edge, mask_value, wri);
                     count++;
@@ -1501,35 +1444,6 @@ public class SplatEngine {
     public double[] getElev() {
         return elev;
     }
-
-
-//    /**
-//     * @return the mask_value
-//     */
-//    public char getMask_value() {
-//        return mask_value;
-//    }
-//
-//    /**
-//     * @param mask_value the mask_value to set
-//     */
-//    public void setMask_value(char mask_value) {
-//        this.mask_value = mask_value;
-//    }
-//
-//    /**
-//     * @return the File
-//     */
-//    public char getFile() {
-//        return File;
-//    }
-//
-//    /**
-//     * @param File the File to set
-//     */
-//    public void setFile(char File) {
-//        this.File = File;
-//    }
 
     /**
      * @return the kml

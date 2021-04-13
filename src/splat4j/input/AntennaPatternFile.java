@@ -74,46 +74,7 @@ public class AntennaPatternFile {
                         read_count[x]++;
                     }
 
-//		fgets(string,254,fd);
-//		pointer=strchr(string,';');
-//
-//		if (pointer!=null)
-//			pointer=0;
-//
-//		sscanf(string,"%f",&rotation);
-//
-//
-//		/* Read azimuth (degrees) and corresponding
-//		   normalized field radiation pattern amplitude
-//		   (0.0 to 1.0) until EOF is reached. */
-//
-//		fgets(string,254,fd);
-//		pointer=strchr(string,';');
-//
-//		if (pointer!=null)
-//			*pointer=0;
-//
-//		sscanf(string,"%f %f",&az, &amplitude);
-//
-//		do
-//		{
-//			x=(int)rintf(az);
-//
-//			if (x>=0 && x<=360 && fd!=null)
-//			{
-//				azimuth[x]+=amplitude;
-//				read_count[x]++;
-//			}
-//
-//			fgets(string,254,fd);
-//			pointer=strchr(string,';');
-//
-//			if (pointer!=null)
-//				*pointer=0;
-//
-//			sscanf(string,"%f %f",&az, &amplitude);
-//
-//		} while (feof(fd)==0);
+
                 }
 
                 /* Handle 0=360 degree ambiguity */
